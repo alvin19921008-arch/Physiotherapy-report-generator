@@ -1,0 +1,2663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Physiotherapy Report Generator - Complete Lite App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8fafc;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 0;
+            margin-bottom: 30px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .nav-tab {
+            padding: 12px 20px;
+            background-color: #e5e7eb;
+            border: none;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+            transition: all 0.2s;
+        }
+
+        .nav-tab.active {
+            background-color: #3b82f6;
+            color: white;
+        }
+
+        .nav-tab:hover:not(.active) {
+            background-color: #d1d5db;
+        }
+
+        .section {
+            display: none;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .section h2 {
+            color: #1f2937;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 10px;
+        }
+
+        .section h3 {
+            color: #374151;
+            margin: 20px 0 15px 0;
+            font-size: 1.2rem;
+        }
+
+        .section h4 {
+            color: #4b5563;
+            margin: 15px 0 10px 0;
+            font-size: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+            margin: 5px;
+        }
+
+        .btn-primary {
+            background-color: #3b82f6;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2563eb;
+        }
+
+        .btn-success {
+            background-color: #10b981;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #059669;
+        }
+
+        .btn-secondary {
+            background-color: #6b7280;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #4b5563;
+        }
+
+        .btn-small {
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+
+        .clinical-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .clinical-tab {
+            padding: 10px 20px;
+            background-color: #f3f4f6;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .clinical-tab.active {
+            background-color: #3b82f6;
+            color: white;
+        }
+
+        .clinical-content {
+            display: none;
+        }
+
+        .clinical-content.active {
+            display: block;
+        }
+
+        .assessment-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #f9fafb;
+            border-radius: 6px;
+        }
+
+        .assessment-row label {
+            min-width: 150px;
+            margin-bottom: 0;
+            font-weight: 500;
+        }
+
+        .assessment-row input,
+        .assessment-row select {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .smart-fill-container {
+            background-color: #f0f9ff;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .smart-fill-container p {
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #374151;
+        }
+
+        .dynamic-field-container {
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .radio-group input[type="radio"] {
+            width: auto;
+            margin-right: 5px;
+        }
+
+        .export-section {
+            background: #f0f9ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+
+        .export-output {
+            width: 100%;
+            height: 200px;
+            font-family: monospace;
+            font-size: 12px;
+            background: white;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .nav-tabs {
+                flex-direction: column;
+            }
+            
+            .grid-2, .grid-3 {
+                grid-template-columns: 1fr;
+            }
+
+            .assessment-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .assessment-row label {
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Physiotherapy Report Generator - Complete Lite App</h1>
+            <div class="subtitle">Full Clinical Assessment | Complete Data Compatibility | Corporate Portal Ready</div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showSection(1)">Section 1: Reference</button>
+            <button class="nav-tab" onclick="showSection(2)">Section 2: Patient Info</button>
+            <button class="nav-tab" onclick="showSection(3)">Section 3: Diagnosis</button>
+            <button class="nav-tab" onclick="showSection(4)">Section 4: Referral</button>
+            <button class="nav-tab" onclick="showSection(5)">Section 5: Duration</button>
+            <button class="nav-tab" onclick="showSection(6)">Section 6: Clinical</button>
+            <button class="nav-tab" onclick="showSection(7)">Section 7: Treatment</button>
+            <button class="nav-tab" onclick="showSection(8)">Section 8: Discharge</button>
+            <button class="nav-tab" onclick="showSection(9)">Section 9: Declaration</button>
+        </div>
+
+        <!-- Section 1: Reference Information -->
+        <div class="section active" id="section1">
+            <h2>Section 1: Medical Report Reference Information</h2>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Our Reference</label>
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                        <span>(</span>
+                        <input type="text" class="form-control" id="ourRef" onchange="updateField('ourRef', this.value)" style="flex: 1;">
+                        <span>) in PHY/OA/</span>
+                        <input type="text" class="form-control" id="ourRef2" onchange="updateField('ourRef2', this.value)" style="flex: 1;">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Your Reference</label>
+                    <input type="text" class="form-control" id="yourRef" onchange="updateField('yourRef', this.value)">
+                </div>
+                <div class="form-group">
+                    <label>Report Date</label>
+                    <input type="date" class="form-control" id="reportDate" onchange="updateField('reportDate', this.value)">
+                </div>
+                <div class="form-group">
+                    <label>Your Reference Date</label>
+                    <input type="date" class="form-control" id="yourRefDate" onchange="updateField('yourRefDate', this.value)">
+                </div>
+                <div class="form-group">
+                    <label>Recipient</label>
+                    <input type="text" class="form-control" id="recipient" onchange="updateField('recipient', this.value)">
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 2: Patient Information -->
+        <div class="section" id="section2">
+            <h2>Section 2: Patient Information</h2>
+            <div class="form-group">
+                <label>Name of Patient:</label>
+                <input type="text" class="form-control" id="patientName" onchange="updateField('patientName', this.value)" placeholder="e.g., CHAN Tai Man, input CHAN, T. M.">
+            </div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Sex</label>
+                    <select class="form-control" id="patientSex" onchange="updateField('patientSex', this.value)">
+                        <option value="">Select sex</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Age</label>
+                    <input type="number" class="form-control" id="patientAge" onchange="updateField('patientAge', this.value)">
+                </div>
+                <div class="form-group">
+                    <label>HKID No.</label>
+                    <input type="text" class="form-control" id="hkidNo" onchange="updateField('hkidNo', this.value)">
+                </div>
+                <div class="form-group">
+                    <label>Physiotherapy OPD No.</label>
+                    <input type="text" class="form-control" id="ptOpdNo" onchange="updateField('ptOpdNo', this.value)">
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 3: Primary Diagnosis -->
+        <div class="section" id="section3">
+            <h2>Section 3: Primary Diagnosis</h2>
+            <div class="form-group">
+                <label>Primary Diagnosis:</label>
+                <textarea class="form-control" id="diagnosis" onchange="updateField('diagnosis', this.value)"></textarea>
+            </div>
+        </div>
+
+        <!-- Section 4: Source of Referral -->
+        <div class="section" id="section4">
+            <h2>Section 4: Source of Referral</h2>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Department:</label>
+                    <input type="text" class="form-control" id="department" onchange="updateField('department', this.value)">
+                </div>
+                <div class="form-group">
+                    <label>Hospital:</label>
+                    <input type="text" class="form-control" id="hospital" onchange="updateField('hospital', this.value)">
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 5: Duration of Treatment -->
+        <div class="section" id="section5">
+            <h2>Section 5: Duration of Treatment</h2>
+            <div class="form-group">
+                <label>Total Number of Sessions</label>
+                <input type="number" class="form-control" id="totalSessions" onchange="updateField('totalSessions', this.value)">
+            </div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Date of Registration</label>
+                    <input type="date" class="form-control" id="registrationDate" onchange="updateField('registrationDate', this.value)">
+                </div>
+                <div class="form-group">
+                    <label>Start Date</label>
+                    <input type="date" class="form-control" id="startDate" onchange="updateField('startDate', this.value)">
+                </div>
+                <div class="form-group">
+                    <label>End Date</label>
+                    <input type="date" class="form-control" id="endDate" onchange="updateField('endDate', this.value)">
+                </div>
+                <div class="form-group">
+                    <label>Case Therapist(s)</label>
+                    <input type="text" class="form-control" id="caseTherapists" onchange="updateField('caseTherapists', this.value)">
+                </div>
+                <div class="form-group">
+                    <label>Report Written by</label>
+                    <input type="text" class="form-control" id="reportWrittenBy" onchange="updateField('reportWrittenBy', this.value)">
+                </div>
+                <div class="form-group">
+                    <label>Attended Sessions</label>
+                    <input type="number" class="form-control" id="attendedSessions" onchange="updateField('attendedSessions', this.value)">
+                </div>
+                <div class="form-group">
+                    <label>Defaulted Sessions</label>
+                    <input type="number" class="form-control" id="defaultedSessions" onchange="updateField('defaultedSessions', this.value)">
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 6: Clinical Information -->
+        <div class="section" id="section6">
+            <h2>Section 6: Clinical Information</h2>
+            
+            <!-- Clinical Tabs -->
+            <div class="clinical-tabs">
+                <button class="clinical-tab active" onclick="showClinicalTab('initial')">Initial Findings</button>
+                <button class="clinical-tab" onclick="showClinicalTab('interim')">Interim Findings</button>
+                <button class="clinical-tab" onclick="showClinicalTab('final')">Final Findings</button>
+            </div>
+
+            <!-- Initial Clinical Content -->
+            <div class="clinical-content active" id="initialClinical">
+                <h3>Initial Clinical Findings</h3>
+                <div class="form-group">
+                    <label>Date:</label>
+                    <input type="date" class="form-control" id="initialDate" onchange="updateNestedField('initialFindings.date', this.value)">
+                </div>
+                
+                <h4>I. Patient's Complaints</h4>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Side:</label>
+                        <select class="form-control" id="initialComplaintsSide" onchange="updateComplaintsSide('initial', this.value)">
+                            <option value="">Select Side</option>
+                            <option value="Right">Right</option>
+                            <option value="Left">Left</option>
+                            <option value="Bilateral">Bilateral</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Pain Region:</label>
+                        <select class="form-control" id="initialPainRegion" onchange="updatePainRegion('initial', this.value)">
+                            <option value="">Select Region</option>
+                            <option value="Back">Back</option>
+                            <option value="Neck">Neck</option>
+                            <option value="Shoulder">Shoulder</option>
+                            <option value="Elbow">Elbow</option>
+                            <option value="Wrist">Wrist</option>
+                            <option value="Hand">Hand</option>
+                            <option value="Hip">Hip</option>
+                            <option value="Knee">Knee</option>
+                            <option value="Ankle">Ankle</option>
+                            <option value="Foot">Foot</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Pain Intensity (NPRS):</label>
+                        <input type="number" class="form-control" id="initialPainIntensity" min="0" max="10" onchange="updateNestedField('initialFindings.complaints.painIntensity', this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label>Other Symptoms:</label>
+                        <input type="text" class="form-control" id="initialOtherSymptoms" onchange="updateNestedField('initialFindings.complaints.otherSymptoms', this.value)">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Overall Subjective Improvement (NGRCS):</label>
+                    <select class="form-control" id="initialImprovement" onchange="updateNestedField('initialFindings.complaints.improvement', this.value)">
+                        <option value="">Select Improvement</option>
+                        <option value="0 out of 10">0 out of 10</option>
+                        <option value="1 out of 10">1 out of 10</option>
+                        <option value="2 out of 10">2 out of 10</option>
+                        <option value="3 out of 10">3 out of 10</option>
+                        <option value="4 out of 10">4 out of 10</option>
+                        <option value="5 out of 10">5 out of 10</option>
+                        <option value="6 out of 10">6 out of 10</option>
+                        <option value="7 out of 10">7 out of 10</option>
+                        <option value="8 out of 10">8 out of 10</option>
+                        <option value="9 out of 10">9 out of 10</option>
+                        <option value="10 out of 10">10 out of 10</option>
+                    </select>
+                </div>
+                
+                <h4>II. Objective Findings</h4>
+                
+                <!-- Dynamic Clinical Assessment Fields Container -->
+                <div id="initialObjectiveContainer">
+                    <!-- AROM Fields -->
+                    <div class="dynamic-field-container">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="initialAromNotTested" onchange="toggleNotTested('initial', 'arom', this.checked)">
+                            <label for="initialAromNotTested">Active Range of Movement (AROM): Not tested</label>
+                        </div>
+                        <div id="initialAromContainer"></div>
+                    </div>
+
+                    <!-- Small Joint ROM Fields -->
+                    <div class="dynamic-field-container" id="initialSmallJointContainer" style="display: none;">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="initialSmallJointNotTested" onchange="toggleNotTested('initial', 'smallJoint', this.checked)">
+                            <label for="initialSmallJointNotTested">Small Joint ROM: Not tested</label>
+                        </div>
+                        <div id="initialSmallJointFields"></div>
+                        <button type="button" class="btn btn-secondary btn-small" onclick="addSmallJoint('initial')">Add Joint</button>
+                    </div>
+
+                    <!-- Hand Grip Strength Fields -->
+                    <div class="dynamic-field-container" id="initialHandGripContainer" style="display: none;">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="initialHandGripNotTested" onchange="toggleNotTested('initial', 'handGrip', this.checked)">
+                            <label for="initialHandGripNotTested">Hand Grip Strength: Not tested</label>
+                        </div>
+                        <div id="initialHandGripFields"></div>
+                    </div>
+
+                    <!-- Muscle Power Fields -->
+                    <div class="dynamic-field-container">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="initialMusclePowerNotTested" onchange="toggleNotTested('initial', 'musclePower', this.checked)">
+                            <label for="initialMusclePowerNotTested">Muscle Power: Not tested</label>
+                        </div>
+                        
+                        <div class="smart-fill-container">
+                            <p>Smart Auto-fill: Select a grade to apply to all muscle groups, then modify individual groups as needed.</p>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <select id="initialMusclePowerSmartFill">
+                                    <option value="">Select Grade</option>
+                                    <option value="0/5">0/5</option>
+                                    <option value="1/5">1/5</option>
+                                    <option value="2/5">2/5</option>
+                                    <option value="3/5">3/5</option>
+                                    <option value="4/5">4/5</option>
+                                    <option value="5/5">5/5</option>
+                                </select>
+                                <button type="button" class="btn btn-secondary btn-small" onclick="smartFillMusclePower('initial')">Auto-fill all groups</button>
+                                <button type="button" class="btn btn-secondary btn-small" onclick="clearAllMusclePower('initial')">Clear All</button>
+                            </div>
+                        </div>
+                        <div id="initialMusclePowerContainer"></div>
+                    </div>
+
+                    <!-- Myotome Fields -->
+                    <div class="dynamic-field-container" id="initialMyotomeContainer" style="display: none;">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="initialMyotomeNotTested" onchange="toggleNotTested('initial', 'myotome', this.checked)">
+                            <label for="initialMyotomeNotTested">Myotome: Not tested</label>
+                        </div>
+                        
+                        <div class="smart-fill-container">
+                            <p>Smart Auto-fill: Select a grade to apply to all levels (both left and right), then modify individual levels as needed.</p>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <select id="initialMyotomeSmartFill">
+                                    <option value="">Select Grade</option>
+                                    <option value="0/5">0/5</option>
+                                    <option value="1/5">1/5</option>
+                                    <option value="2/5">2/5</option>
+                                    <option value="3/5">3/5</option>
+                                    <option value="4/5">4/5</option>
+                                    <option value="5/5">5/5</option>
+                                </select>
+                                <button type="button" class="btn btn-secondary btn-small" onclick="smartFillMyotome('initial')">Auto-fill all levels</button>
+                                <button type="button" class="btn btn-secondary btn-small" onclick="clearAllMyotome('initial')">Clear All</button>
+                            </div>
+                        </div>
+                        <div id="initialMyotomeFields"></div>
+                    </div>
+
+                    <!-- Additional Objective Findings -->
+                    <div class="dynamic-field-container">
+                        <h4>Additional Findings</h4>
+                        
+                        <!-- Tenderness -->
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="initialTenderness" onchange="toggleAdditionalField('initial', 'tenderness', this.checked)">
+                            <label for="initialTenderness">Include tenderness finding</label>
+                        </div>
+                        <div id="initialTendernessFields" class="hidden">
+                            <div class="form-group">
+                                <label>Tenderness Area:</label>
+                                <input type="text" class="form-control" onchange="updateNestedField('initialFindings.objectiveFindings.tenderness.area', this.value)">
+                            </div>
+                        </div>
+
+                        <!-- Swelling -->
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="initialSwelling" onchange="toggleAdditionalField('initial', 'swelling', this.checked)">
+                            <label for="initialSwelling">Include swelling assessment</label>
+                        </div>
+                        <div id="initialSwellingFields" class="hidden">
+                            <div class="form-group">
+                                <label>Swelling Present:</label>
+                                <div class="radio-group">
+                                    <label><input type="radio" name="initialSwellingPresent" value="Yes" onchange="updateNestedField('initialFindings.objectiveFindings.swelling.present', this.value)"> Yes</label>
+                                    <label><input type="radio" name="initialSwellingPresent" value="No" onchange="updateNestedField('initialFindings.objectiveFindings.swelling.present', this.value)"> No</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Temperature -->
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="initialTemperature" onchange="toggleAdditionalField('initial', 'temperature', this.checked)">
+                            <label for="initialTemperature">Include temperature assessment</label>
+                        </div>
+                        <div id="initialTemperatureFields" class="hidden">
+                            <div class="form-group">
+                                <label>Increased Temperature:</label>
+                                <div class="radio-group">
+                                    <label><input type="radio" name="initialTemperatureIncreased" value="Yes" onchange="updateNestedField('initialFindings.objectiveFindings.temperature.increased', this.value)"> Yes</label>
+                                    <label><input type="radio" name="initialTemperatureIncreased" value="No" onchange="updateNestedField('initialFindings.objectiveFindings.temperature.increased', this.value)"> No</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sensation -->
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="initialSensation" onchange="toggleAdditionalField('initial', 'sensation', this.checked)">
+                            <label for="initialSensation">Include sensation assessment</label>
+                        </div>
+                        <div id="initialSensationFields" class="hidden">
+                            <div class="form-group">
+                                <label>Sensation Status:</label>
+                                <select class="form-control" onchange="updateSensationStatus('initial', this.value)">
+                                    <option value="">Select Status</option>
+                                    <option value="Normal">Normal</option>
+                                    <option value="Abnormal">Abnormal</option>
+                                </select>
+                            </div>
+                            <div id="initialSensationAbnormalFields" class="hidden">
+                                <div class="grid-2">
+                                    <div class="form-group">
+                                        <label>Reduction Percentage:</label>
+                                        <input type="number" class="form-control" min="0" max="100" onchange="updateNestedField('initialFindings.objectiveFindings.sensation.reductionPercentage', this.value)">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Over Which Area:</label>
+                                        <input type="text" class="form-control" onchange="updateNestedField('initialFindings.objectiveFindings.sensation.area', this.value)">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Reflex -->
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="initialReflex" onchange="toggleAdditionalField('initial', 'reflex', this.checked)">
+                            <label for="initialReflex">Include reflex finding</label>
+                        </div>
+                        <div id="initialReflexFields" class="hidden">
+                            <div class="form-group">
+                                <label>Reflex:</label>
+                                <div class="radio-group">
+                                    <label><input type="radio" name="initialReflexStatus" value="Normal" onchange="updateNestedField('initialFindings.objectiveFindings.reflex.status', this.value)"> Normal</label>
+                                    <label><input type="radio" name="initialReflexStatus" value="Abnormal" onchange="updateNestedField('initialFindings.objectiveFindings.reflex.status', this.value)"> Abnormal</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Gait Assessment -->
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label>Walking Aid:</label>
+                                <select class="form-control" onchange="updateNestedField('initialFindings.objectiveFindings.gait.walkingAid', this.value)">
+                                    <option value="">Select Aid</option>
+                                    <option value="Unaided">Unaided</option>
+                                    <option value="Stick">Stick</option>
+                                    <option value="Quadruped">Quadruped</option>
+                                    <option value="Frame">Frame</option>
+                                    <option value="Elbow Crutches">Elbow Crutches</option>
+                                    <option value="Rollator">Rollator</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Walking Stability:</label>
+                                <select class="form-control" onchange="updateNestedField('initialFindings.objectiveFindings.gait.walkingStability', this.value)">
+                                    <option value="">Select Stability</option>
+                                    <option value="Good">Good</option>
+                                    <option value="Normal">Normal</option>
+                                    <option value="Acceptable">Acceptable</option>
+                                    <option value="Satisfactory">Satisfactory</option>
+                                    <option value="Fair">Fair</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Weight Bearing Status -->
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="initialWeightBearing" onchange="toggleAdditionalField('initial', 'weightBearing', this.checked)">
+                            <label for="initialWeightBearing">Include weight bearing status</label>
+                        </div>
+                        <div id="initialWeightBearingFields" class="hidden">
+                            <div class="form-group">
+                                <label>Weight Bearing Status:</label>
+                                <select class="form-control" onchange="updateNestedField('initialFindings.objectiveFindings.gait.weightBearing', this.value)">
+                                    <option value="">Select Status</option>
+                                    <option value="Full weight bearing">Full weight bearing</option>
+                                    <option value="Partial weight bearing">Partial weight bearing</option>
+                                    <option value="Toe touch weight bearing">Toe touch weight bearing</option>
+                                    <option value="Non weight bearing">Non weight bearing</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Special Tests -->
+                        <div class="form-group">
+                            <label>Special Tests:</label>
+                            <div id="initialSpecialTestsContainer"></div>
+                            <button type="button" class="btn btn-secondary btn-small" onclick="addSpecialTest('initial')">Add Special Test</button>
+                        </div>
+
+                        <!-- Questionnaire -->
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label>Questionnaire:</label>
+                                <select class="form-control" id="initialQuestionnaire" onchange="updateNestedField('initialFindings.objectiveFindings.questionnaire.type', this.value)">
+                                    <option value="">Select Questionnaire</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Score:</label>
+                                <input type="number" class="form-control" onchange="updateNestedField('initialFindings.objectiveFindings.questionnaire.score', this.value)">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Assessment:</label>
+                    <textarea class="form-control" id="initialAssessment" onchange="updateNestedField('initialFindings.assessment', this.value)" placeholder="Clinical assessment"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Plan:</label>
+                    <textarea class="form-control" id="initialPlan" onchange="updateNestedField('initialFindings.plan', this.value)" placeholder="Treatment plan"></textarea>
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <button type="button" class="btn btn-primary" onclick="copyFromInitial('interim')">Copy to Interim Findings</button>
+                    <button type="button" class="btn btn-primary" onclick="copyFromInitial('final')">Copy to Final Findings</button>
+                </div>
+            </div>
+
+            <!-- Interim Clinical Content -->
+            <div class="clinical-content" id="interimClinical">
+                <h3>Interim Clinical Findings</h3>
+                <div class="form-group">
+                    <label>Date:</label>
+                    <input type="date" class="form-control" id="interimDate" onchange="updateNestedField('interimFindings.date', this.value)">
+                </div>
+                
+                <h4>I. Patient's Complaints</h4>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Side:</label>
+                        <select class="form-control" id="interimComplaintsSide" onchange="updateComplaintsSide('interim', this.value)">
+                            <option value="">Select Side</option>
+                            <option value="Right">Right</option>
+                            <option value="Left">Left</option>
+                            <option value="Bilateral">Bilateral</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Pain Region:</label>
+                        <select class="form-control" id="interimPainRegion" onchange="updatePainRegion('interim', this.value)">
+                            <option value="">Select Region</option>
+                            <option value="Back">Back</option>
+                            <option value="Neck">Neck</option>
+                            <option value="Shoulder">Shoulder</option>
+                            <option value="Elbow">Elbow</option>
+                            <option value="Wrist">Wrist</option>
+                            <option value="Hand">Hand</option>
+                            <option value="Hip">Hip</option>
+                            <option value="Knee">Knee</option>
+                            <option value="Ankle">Ankle</option>
+                            <option value="Foot">Foot</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Pain Intensity (NPRS):</label>
+                        <input type="number" class="form-control" id="interimPainIntensity" min="0" max="10" onchange="updateNestedField('interimFindings.complaints.painIntensity', this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label>Other Symptoms:</label>
+                        <input type="text" class="form-control" id="interimOtherSymptoms" onchange="updateNestedField('interimFindings.complaints.otherSymptoms', this.value)">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Overall Subjective Improvement (NGRCS):</label>
+                    <select class="form-control" id="interimImprovement" onchange="updateNestedField('interimFindings.complaints.improvement', this.value)">
+                        <option value="">Select Improvement</option>
+                        <option value="0 out of 10">0 out of 10</option>
+                        <option value="1 out of 10">1 out of 10</option>
+                        <option value="2 out of 10">2 out of 10</option>
+                        <option value="3 out of 10">3 out of 10</option>
+                        <option value="4 out of 10">4 out of 10</option>
+                        <option value="5 out of 10">5 out of 10</option>
+                        <option value="6 out of 10">6 out of 10</option>
+                        <option value="7 out of 10">7 out of 10</option>
+                        <option value="8 out of 10">8 out of 10</option>
+                        <option value="9 out of 10">9 out of 10</option>
+                        <option value="10 out of 10">10 out of 10</option>
+                    </select>
+                </div>
+                
+                <h4>II. Objective Findings</h4>
+                
+                <!-- Dynamic Clinical Assessment Fields Container -->
+                <div id="interimObjectiveContainer">
+                    <!-- Same structure as initial but with interim IDs -->
+                    <!-- This will be populated by JavaScript -->
+                </div>
+
+                <div class="form-group">
+                    <label>Assessment:</label>
+                    <textarea class="form-control" id="interimAssessment" onchange="updateNestedField('interimFindings.assessment', this.value)" placeholder="Updated assessment"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Plan:</label>
+                    <textarea class="form-control" id="interimPlan" onchange="updateNestedField('interimFindings.plan', this.value)" placeholder="Updated treatment plan"></textarea>
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <button type="button" class="btn btn-primary" onclick="copyFromInterim('final')">Copy to Final Findings</button>
+                </div>
+            </div>
+
+            <!-- Final Clinical Content -->
+            <div class="clinical-content" id="finalClinical">
+                <h3>Final Clinical Findings</h3>
+                <div style="margin-bottom: 20px;">
+                    <button type="button" class="btn btn-primary" onclick="copyFromInitial('final')">Copy from Initial Findings</button>
+                    <button type="button" class="btn btn-primary" onclick="copyFromInterim('final')">Copy from Interim Findings</button>
+                </div>
+                
+                <div class="form-group">
+                    <label>Date:</label>
+                    <input type="date" class="form-control" id="finalDate" onchange="updateNestedField('finalFindings.date', this.value)">
+                </div>
+                
+                <h4>I. Patient's Complaints</h4>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Side:</label>
+                        <select class="form-control" id="finalComplaintsSide" onchange="updateComplaintsSide('final', this.value)">
+                            <option value="">Select Side</option>
+                            <option value="Right">Right</option>
+                            <option value="Left">Left</option>
+                            <option value="Bilateral">Bilateral</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Pain Region:</label>
+                        <select class="form-control" id="finalPainRegion" onchange="updatePainRegion('final', this.value)">
+                            <option value="">Select Region</option>
+                            <option value="Back">Back</option>
+                            <option value="Neck">Neck</option>
+                            <option value="Shoulder">Shoulder</option>
+                            <option value="Elbow">Elbow</option>
+                            <option value="Wrist">Wrist</option>
+                            <option value="Hand">Hand</option>
+                            <option value="Hip">Hip</option>
+                            <option value="Knee">Knee</option>
+                            <option value="Ankle">Ankle</option>
+                            <option value="Foot">Foot</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Pain Intensity (NPRS):</label>
+                        <input type="number" class="form-control" id="finalPainIntensity" min="0" max="10" onchange="updateNestedField('finalFindings.complaints.painIntensity', this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label>Other Symptoms:</label>
+                        <input type="text" class="form-control" id="finalOtherSymptoms" onchange="updateNestedField('finalFindings.complaints.otherSymptoms', this.value)">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Overall Subjective Improvement (NGRCS):</label>
+                    <select class="form-control" id="finalImprovement" onchange="updateNestedField('finalFindings.complaints.improvement', this.value)">
+                        <option value="">Select Improvement</option>
+                        <option value="0 out of 10">0 out of 10</option>
+                        <option value="1 out of 10">1 out of 10</option>
+                        <option value="2 out of 10">2 out of 10</option>
+                        <option value="3 out of 10">3 out of 10</option>
+                        <option value="4 out of 10">4 out of 10</option>
+                        <option value="5 out of 10">5 out of 10</option>
+                        <option value="6 out of 10">6 out of 10</option>
+                        <option value="7 out of 10">7 out of 10</option>
+                        <option value="8 out of 10">8 out of 10</option>
+                        <option value="9 out of 10">9 out of 10</option>
+                        <option value="10 out of 10">10 out of 10</option>
+                    </select>
+                </div>
+                
+                <h4>II. Objective Findings</h4>
+                
+                <!-- Dynamic Clinical Assessment Fields Container -->
+                <div id="finalObjectiveContainer">
+                    <!-- Same structure as initial but with final IDs -->
+                    <!-- This will be populated by JavaScript -->
+                </div>
+
+                <div class="form-group">
+                    <label>Assessment:</label>
+                    <textarea class="form-control" id="finalAssessment" onchange="updateNestedField('finalFindings.assessment', this.value)" placeholder="Final assessment"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Plan:</label>
+                    <textarea class="form-control" id="finalPlan" onchange="updateNestedField('finalFindings.plan', this.value)" placeholder="Final treatment plan"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 7: Treatment Methods -->
+        <div class="section" id="section7">
+            <h2>Section 7: Treatment Methods</h2>
+            
+            <div class="form-group">
+                <h4>Thermal Therapy</h4>
+                <div class="grid-2">
+                    <label><input type="checkbox" onchange="updateTreatmentMethod('Hot pack', this.checked)"> Hot pack</label>
+                    <label><input type="checkbox" onchange="updateTreatmentMethod('Cold pack', this.checked)"> Cold pack</label>
+                    <label><input type="checkbox" onchange="updateTreatmentMethod('Wax therapy', this.checked)"> Wax therapy</label>
+                    <label><input type="checkbox" onchange="updateTreatmentMethod('Hydrotherapy', this.checked)"> Hydrotherapy</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <h4>Electrical Therapy</h4>
+                <div class="grid-2">
+                    <label><input type="checkbox" onchange="updateTreatmentMethod('Interferential electrical therapy', this.checked)"> Interferential electrical therapy</label>
+                    <label><input type="checkbox" onchange="updateTreatmentMethod('Neuromuscular electrical stimulation', this.checked)"> Neuromuscular electrical stimulation</label>
+                    <label><input type="checkbox" onchange="updateTreatmentMethod('Transcutaneous Electrical Nerve Stimulation (TENS)', this.checked)"> Transcutaneous Electrical Nerve Stimulation (TENS)</label>
+                    <label><input type="checkbox" onchange="updateTreatmentMethod('Ultrasound therapy', this.checked)"> Ultrasound therapy</label>
+                    <label><input type="checkbox" onchange="updateTreatmentMethod('Pulsed electromagnetic field therapy', this.checked)"> Pulsed electromagnetic field therapy</label>
+                    <label><input type="checkbox" onchange="updateTreatmentMethod('Shockwave therapy', this.checked)"> Shockwave therapy</label>
+                    <label><input type="checkbox" onchange="updateTreatmentMethod('Micro-current therapy', this.checked)"> Micro-current therapy</label>
+                    <label><input type="checkbox" onchange="updateTreatmentMethod('Infrared light therapy', this.checked)"> Infrared light therapy</label>
+                    <label><input type="checkbox" onchange="updateTreatmentMethod('Polarized polychromatic light therapy', this.checked)"> Polarized polychromatic light therapy</label>
+                    <label><input type="checkbox" onchange="updateTreatmentMethod('High electromagnetic inductive therapy', this.checked)"> High electromagnetic inductive therapy</label>
+                    <label><input type="checkbox" onchange="updateTreatmentMethod('Pulsed shortwave therapy', this.checked)"> Pulsed shortwave therapy</label>
+                    <label><input type="checkbox" onchange="updateTreatmentMethod('Flowpulse therapy', this.checked)"> Flowpulse therapy</label>
+                    <label><input type="checkbox" onchange="updateTreatmentMethod('Laser therapy', this.checked)"> Laser therapy</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <h4>Traction Therapy</h4>
+                <div class="grid-2">
+                    <label><input type="checkbox" onchange="updateTreatmentMethod('Intermittent lumbar traction', this.checked)"> Intermittent lumbar traction</label>
+                    <label><input type="checkbox" onchange="updateTreatmentMethod('Intermittent neck traction', this.checked)"> Intermittent neck traction</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <h4>Manual Therapy</h4>
+                <label><input type="checkbox" onchange="updateTreatmentMethod('Manual therapy', this.checked)"> Manual therapy</label>
+            </div>
+
+            <div class="form-group">
+                <h4>Exercise Therapy</h4>
+                <div class="grid-2">
+                    <label><input type="checkbox" onchange="updateTreatmentMethod('Mobilization exercise', this.checked)"> Mobilization exercise</label>
+                    <label><input type="checkbox" onchange="updateTreatmentMethod('Strengthening exercise', this.checked)"> Strengthening exercise</label>
+                    <label><input type="checkbox" onchange="updateTreatmentMethod('Exercise therapy', this.checked)"> Exercise therapy</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <h4>Functional Training</h4>
+                <div class="grid-2">
+                    <label><input type="checkbox" onchange="updateTreatmentMethod('Balance training', this.checked)"> Balance training</label>
+                    <label><input type="checkbox" onchange="updateTreatmentMethod('Gait training', this.checked)"> Gait training</label>
+                    <label><input type="checkbox" onchange="updateTreatmentMethod('Functional training', this.checked)"> Functional training</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <h4>Others</h4>
+                <div class="grid-2">
+                    <label><input type="checkbox" onchange="updateTreatmentMethod('De-sensitization training', this.checked)"> De-sensitization training</label>
+                    <label><input type="checkbox" onchange="updateTreatmentMethod('Acupuncture', this.checked)"> Acupuncture</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Other Treatment:</label>
+                <textarea class="form-control" id="otherTreatment" onchange="updateField('otherTreatment', this.value)" placeholder="Describe any other treatments not listed above"></textarea>
+            </div>
+        </div>
+
+        <!-- Section 8: Discharge Summary -->
+        <div class="section" id="section8">
+            <h2>Section 8: Discharge Summary</h2>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Discharge Type:</label>
+                    <select class="form-control" id="dischargeType" onchange="updateDischargeType(this.value)">
+                        <option value="">Select discharge type</option>
+                        <option value="Discharged">Discharged</option>
+                        <option value="Discharged with static progress">Discharged with static progress</option>
+                        <option value="Still receiving physiotherapy">Still receiving physiotherapy</option>
+                        <option value="Defaulted">Defaulted</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                </div>
+                
+                <!-- Dynamic discharge fields based on type -->
+                <div id="dischargeFields">
+                    <!-- Will be populated by JavaScript based on discharge type -->
+                </div>
+                
+                <div class="form-group">
+                    <label>Final Outcome:</label>
+                    <textarea class="form-control" id="finalOutcome" onchange="updateNestedField('dischargeSummary.componentData.finalOutcome', this.value)" placeholder="Final treatment outcome"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Recommendations:</label>
+                    <textarea class="form-control" id="recommendations" onchange="updateNestedField('dischargeSummary.componentData.recommendations', this.value)" placeholder="Post-discharge recommendations"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 9: Declaration -->
+        <div class="section" id="section9">
+            <h2>Section 9: Declaration</h2>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Consent Date for Declaration:</label>
+                    <input type="date" class="form-control" id="consentDate" onchange="updateField('consentDate', this.value)">
+                </div>
+                <div class="form-group">
+                    <label>Name:</label>
+                    <input type="text" class="form-control" id="declarationName" onchange="updateField('declarationName', this.value)">
+                </div>
+                <div class="form-group">
+                    <label>Title:</label>
+                    <input type="text" class="form-control" id="declarationTitle" onchange="updateField('declarationTitle', this.value)">
+                </div>
+                <div class="form-group">
+                    <label>Education Qualifications:</label>
+                    <textarea class="form-control" id="educationQualifications" onchange="updateField('educationQualifications', this.value)"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Export Section -->
+        <div class="export-section">
+            <h3>Data Export</h3>
+            <p>Generate a data string that can be imported into the full app for identical report generation.</p>
+            <div style="margin: 15px 0;">
+                <button type="button" class="btn btn-success" onclick="generateDataString()">Generate Data String</button>
+                <button type="button" class="btn btn-primary" onclick="fillMockData()">Fill Mock Data</button>
+            </div>
+            <textarea class="export-output" id="exportOutput" readonly placeholder="Click 'Generate Data String' to create exportable data..."></textarea>
+            <div style="margin-top: 10px;">
+                <button type="button" class="btn btn-secondary" onclick="copyDataString()">Copy Data String</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // PHASE 1: CORE STRUCTURE EXPANSION
+        
+        // Enhanced data structure with comprehensive clinical findings
+        var reportData = {
+            // Section 1: Reference Information
+            ourRef: '',
+            ourRef2: '',
+            yourRef: '',
+            yourRefDate: '',
+            reportDate: '',
+            recipient: '',
+            
+            // Section 2: Patient Information
+            patientName: '',
+            patientSex: '',
+            patientAge: '',
+            hkidNo: '',
+            ptOpdNo: '',
+            
+            // Section 3: Diagnosis
+            diagnosis: '',
+            
+            // Section 4: Referral Source
+            department: '',
+            hospital: '',
+            
+            // Section 5: Duration
+            totalSessions: '',
+            registrationDate: '',
+            startDate: '',
+            endDate: '',
+            caseTherapists: '',
+            reportWrittenBy: '',
+            attendedSessions: '',
+            defaultedSessions: '',
+            
+            // Section 6: Clinical Findings (comprehensive nested structure)
+            initialFindings: {
+                date: '',
+                complaints: {
+                    side: '',
+                    painRegion: '',
+                    painIntensity: '',
+                    otherSymptoms: '',
+                    improvement: ''
+                },
+                objectiveFindings: {
+                    arom: [],
+                    musclePower: [],
+                    myotome: [],
+                    smallJointRom: [],
+                    handGripStrength: {
+                        leftHandGrip: '',
+                        rightHandGrip: '',
+                        leftPinchGrip: '',
+                        rightPinchGrip: '',
+                        leftLateralPinch: '',
+                        rightLateralPinch: ''
+                    },
+                    tenderness: {
+                        present: false,
+                        area: ''
+                    },
+                    swelling: {
+                        present: ''
+                    },
+                    temperature: {
+                        increased: ''
+                    },
+                    sensation: {
+                        status: '',
+                        reductionPercentage: '',
+                        area: ''
+                    },
+                    reflex: {
+                        status: ''
+                    },
+                    gait: {
+                        walkingAid: '',
+                        walkingStability: '',
+                        weightBearing: ''
+                    },
+                    specialTests: [],
+                    questionnaire: {
+                        type: '',
+                        score: ''
+                    },
+                    observation: ''
+                },
+                assessment: '',
+                plan: ''
+            },
+            interimFindings: {
+                date: '',
+                complaints: {
+                    side: '',
+                    painRegion: '',
+                    painIntensity: '',
+                    otherSymptoms: '',
+                    improvement: ''
+                },
+                objectiveFindings: {
+                    arom: [],
+                    musclePower: [],
+                    myotome: [],
+                    smallJointRom: [],
+                    handGripStrength: {
+                        leftHandGrip: '',
+                        rightHandGrip: '',
+                        leftPinchGrip: '',
+                        rightPinchGrip: '',
+                        leftLateralPinch: '',
+                        rightLateralPinch: ''
+                    },
+                    tenderness: {
+                        present: false,
+                        area: ''
+                    },
+                    swelling: {
+                        present: ''
+                    },
+                    temperature: {
+                        increased: ''
+                    },
+                    sensation: {
+                        status: '',
+                        reductionPercentage: '',
+                        area: ''
+                    },
+                    reflex: {
+                        status: ''
+                    },
+                    gait: {
+                        walkingAid: '',
+                        walkingStability: '',
+                        weightBearing: ''
+                    },
+                    specialTests: [],
+                    questionnaire: {
+                        type: '',
+                        score: ''
+                    },
+                    observation: ''
+                },
+                assessment: '',
+                plan: ''
+            },
+            finalFindings: {
+                date: '',
+                complaints: {
+                    side: '',
+                    painRegion: '',
+                    painIntensity: '',
+                    otherSymptoms: '',
+                    improvement: ''
+                },
+                objectiveFindings: {
+                    arom: [],
+                    musclePower: [],
+                    myotome: [],
+                    smallJointRom: [],
+                    handGripStrength: {
+                        leftHandGrip: '',
+                        rightHandGrip: '',
+                        leftPinchGrip: '',
+                        rightPinchGrip: '',
+                        leftLateralPinch: '',
+                        rightLateralPinch: ''
+                    },
+                    tenderness: {
+                        present: false,
+                        area: ''
+                    },
+                    swelling: {
+                        present: ''
+                    },
+                    temperature: {
+                        increased: ''
+                    },
+                    sensation: {
+                        status: '',
+                        reductionPercentage: '',
+                        area: ''
+                    },
+                    reflex: {
+                        status: ''
+                    },
+                    gait: {
+                        walkingAid: '',
+                        walkingStability: '',
+                        weightBearing: ''
+                    },
+                    specialTests: [],
+                    questionnaire: {
+                        type: '',
+                        score: ''
+                    },
+                    observation: ''
+                },
+                assessment: '',
+                plan: ''
+            },
+            
+            // Section 7: Treatment Methods
+            treatments: [],
+            otherTreatment: '',
+            
+            // Section 8: Discharge Summary (nested structure)
+            dischargeSummary: {
+                componentData: {
+                    dischargeType: '',
+                    dischargeDate: '',
+                    defaultDate: '',
+                    cancellationDate: '',
+                    scheduledAppointmentDate: '',
+                    cancellationReason: '',
+                    finalOutcome: '',
+                    recommendations: ''
+                }
+            },
+            
+            // Section 9: Declaration
+            consentDate: '',
+            declarationName: '',
+            declarationTitle: '',
+            educationQualifications: ''
+        };
+
+        // Location-based field mapping functions
+        function getAROMMovementsByLocation(location) {
+            var movements = {
+                'Back': ['Flexion', 'Extension', 'Left Lateral Flexion', 'Right Lateral Flexion', 'Left Rotation', 'Right Rotation'],
+                'Neck': ['Flexion', 'Extension', 'Left Lateral Flexion', 'Right Lateral Flexion', 'Left Rotation', 'Right Rotation'],
+                'Shoulder': ['Flexion', 'Extension', 'Abduction', 'Adduction', 'Internal Rotation', 'External Rotation'],
+                'Elbow': ['Flexion', 'Extension', 'Pronation', 'Supination'],
+                'Wrist': ['Flexion', 'Extension', 'Radial Deviation', 'Ulnar Deviation'],
+                'Hand': ['Grip', 'Pinch', 'Opposition'],
+                'Hip': ['Flexion', 'Extension', 'Abduction', 'Adduction', 'Internal Rotation', 'External Rotation'],
+                'Knee': ['Flexion', 'Extension'],
+                'Ankle': ['Dorsiflexion', 'Plantarflexion', 'Inversion', 'Eversion'],
+                'Foot': ['Dorsiflexion', 'Plantarflexion', 'Inversion', 'Eversion']
+            };
+            return movements[location] || [];
+        }
+
+        function getMuscleGroupsByLocation(location) {
+            var muscleGroups = {
+                'Back': [
+                    {name: 'Erector Spinae', id: 'erectorSpinae', bilateral: true},
+                    {name: 'Latissimus Dorsi', id: 'latissimusDorsi', bilateral: true},
+                    {name: 'Rhomboids', id: 'rhomboids', bilateral: true},
+                    {name: 'Trapezius', id: 'trapezius', bilateral: true}
+                ],
+                'Neck': [
+                    {name: 'Sternocleidomastoid', id: 'sternocleidomastoid', bilateral: true},
+                    {name: 'Scalenes', id: 'scalenes', bilateral: true},
+                    {name: 'Suboccipital', id: 'suboccipital', bilateral: true}
+                ],
+                'Shoulder': [
+                    {name: 'Deltoid', id: 'deltoid', bilateral: false},
+                    {name: 'Rotator Cuff', id: 'rotatorCuff', bilateral: false},
+                    {name: 'Biceps', id: 'biceps', bilateral: false},
+                    {name: 'Triceps', id: 'triceps', bilateral: false}
+                ],
+                'Elbow': [
+                    {name: 'Biceps Brachii', id: 'bicepsBrachii', bilateral: false},
+                    {name: 'Triceps Brachii', id: 'tricepsBrachii', bilateral: false},
+                    {name: 'Brachioradialis', id: 'brachioradialis', bilateral: false}
+                ],
+                'Wrist': [
+                    {name: 'Wrist Flexors', id: 'wristFlexors', bilateral: false},
+                    {name: 'Wrist Extensors', id: 'wristExtensors', bilateral: false}
+                ],
+                'Hand': [
+                    {name: 'Intrinsic Hand Muscles', id: 'intrinsicHand', bilateral: true},
+                    {name: 'Thenar Muscles', id: 'thenar', bilateral: true},
+                    {name: 'Hypothenar Muscles', id: 'hypothenar', bilateral: true}
+                ],
+                'Hip': [
+                    {name: 'Hip Flexors', id: 'hipFlexors', bilateral: false},
+                    {name: 'Hip Extensors', id: 'hipExtensors', bilateral: false},
+                    {name: 'Hip Abductors', id: 'hipAbductors', bilateral: false},
+                    {name: 'Hip Adductors', id: 'hipAdductors', bilateral: false}
+                ],
+                'Knee': [
+                    {name: 'Quadriceps', id: 'quadriceps', bilateral: false},
+                    {name: 'Hamstrings', id: 'hamstrings', bilateral: false}
+                ],
+                'Ankle': [
+                    {name: 'Dorsiflexors', id: 'dorsiflexors', bilateral: false},
+                    {name: 'Plantarflexors', id: 'plantarflexors', bilateral: false},
+                    {name: 'Invertors', id: 'invertors', bilateral: false},
+                    {name: 'Evertors', id: 'evertors', bilateral: false}
+                ],
+                'Foot': [
+                    {name: 'Intrinsic Foot Muscles', id: 'intrinsicFoot', bilateral: true}
+                ]
+            };
+            return muscleGroups[location] || [];
+        }
+
+        function getMyotomeLevelsByLocation(location) {
+            var myotomeLevels = {
+                'Back': ['L2', 'L3', 'L4', 'L5', 'S1'],
+                'Neck': ['C5', 'C6', 'C7', 'C8', 'T1']
+            };
+            return myotomeLevels[location] || [];
+        }
+
+        function getSmallJointsByLocation(location) {
+            var smallJoints = {
+                'Hand': ['CMCJ', 'MCPJ', 'PIPJ', 'DIPJ', 'IPJ'],
+                'Foot': ['MTPJ', 'PIPJ', 'DIPJ', 'IPJ']
+            };
+            return smallJoints[location] || [];
+        }
+
+        function getQuestionnairesByLocation(location) {
+            var questionnaires = {
+                'Shoulder': ['QuickDASH'],
+                'Elbow': ['QuickDASH'],
+                'Wrist': ['QuickDASH'],
+                'Hand': ['QuickDASH'],
+                'Hip': ['Lower Extremity Functional Scale'],
+                'Knee': ['Lower Extremity Functional Scale'],
+                'Ankle': ['Lower Extremity Functional Scale'],
+                'Foot': ['Lower Extremity Functional Scale'],
+                'Back': ['Roland-Morris Disability Questionnaire'],
+                'Neck': ['Northwick Park Neck Pain Questionnaire']
+            };
+            return questionnaires[location] || [];
+        }
+
+        // Core dynamic field generation functions
+        function generateClinicalFields(section, location, side) {
+            if (!location) return;
+            
+            // Clear existing fields
+            clearClinicalFields(section);
+            
+            // Generate AROM fields
+            generateAROMFields(section, location);
+            
+            // Generate muscle power fields
+            generateMusclePowerFields(section, location, side);
+            
+            // Generate myotome fields (only for back/neck)
+            if (location === 'Back' || location === 'Neck') {
+                generateMyotomeFields(section, location);
+                document.getElementById(section + 'MyotomeContainer').style.display = 'block';
+            } else {
+                document.getElementById(section + 'MyotomeContainer').style.display = 'none';
+            }
+            
+            // Generate small joint fields (only for hand/foot)
+            if (location === 'Hand' || location === 'Foot') {
+                generateSmallJointFields(section, location);
+                document.getElementById(section + 'SmallJointContainer').style.display = 'block';
+            } else {
+                document.getElementById(section + 'SmallJointContainer').style.display = 'none';
+            }
+            
+            // Generate hand grip strength fields (only for hand)
+            if (location === 'Hand') {
+                generateHandGripFields(section);
+                document.getElementById(section + 'HandGripContainer').style.display = 'block';
+            } else {
+                document.getElementById(section + 'HandGripContainer').style.display = 'none';
+            }
+            
+            // Update questionnaire options
+            updateQuestionnaireOptions(section, location);
+            
+            // Update field visibility based on side selection
+            updateFieldVisibility(section, location, side);
+        }
+
+        function clearClinicalFields(section) {
+            // Clear AROM fields
+            var aromContainer = document.getElementById(section + 'AromContainer');
+            if (aromContainer) aromContainer.innerHTML = '';
+            
+            // Clear muscle power fields
+            var musclePowerContainer = document.getElementById(section + 'MusclePowerContainer');
+            if (musclePowerContainer) musclePowerContainer.innerHTML = '';
+            
+            // Clear myotome fields
+            var myotomeFields = document.getElementById(section + 'MyotomeFields');
+            if (myotomeFields) myotomeFields.innerHTML = '';
+            
+            // Clear small joint fields
+            var smallJointFields = document.getElementById(section + 'SmallJointFields');
+            if (smallJointFields) smallJointFields.innerHTML = '';
+            
+            // Clear hand grip fields
+            var handGripFields = document.getElementById(section + 'HandGripFields');
+            if (handGripFields) handGripFields.innerHTML = '';
+        }
+
+        function updateFieldVisibility(section, location, side) {
+            // Show/hide bilateral vs unilateral fields based on location and side
+            var bilateralLocations = ['Back', 'Neck', 'Hand', 'Foot'];
+            var isBilateralLocation = bilateralLocations.includes(location);
+            
+            // Update muscle power field visibility
+            var musclePowerRows = document.querySelectorAll('#' + section + 'MusclePowerContainer .assessment-row');
+            musclePowerRows.forEach(function(row) {
+                var leftSelect = row.querySelector('.left-grade');
+                var rightSelect = row.querySelector('.right-grade');
+                
+                if (leftSelect && rightSelect) {
+                    if (isBilateralLocation || side === 'Bilateral') {
+                        // Show both sides
+                        leftSelect.style.display = 'block';
+                        rightSelect.style.display = 'block';
+                    } else if (side === 'Left') {
+                        // Show only left
+                        leftSelect.style.display = 'block';
+                        rightSelect.style.display = 'none';
+                    } else if (side === 'Right') {
+                        // Show only right
+                        leftSelect.style.display = 'none';
+                        rightSelect.style.display = 'block';
+                    } else {
+                        // Show both by default
+                        leftSelect.style.display = 'block';
+                        rightSelect.style.display = 'block';
+                    }
+                }
+            });
+        }
+
+        function regenerateAllFields(section) {
+            var location = reportData[section + 'Findings'].complaints.painRegion;
+            var side = reportData[section + 'Findings'].complaints.side;
+            
+            if (location) {
+                generateClinicalFields(section, location, side);
+                populateGeneratedFields(section);
+            }
+        }
+
+        // PHASE 2: CLINICAL COMPONENTS IMPLEMENTATION
+
+        // AROM Fields Implementation
+        function generateAROMFields(section, location) {
+            var movements = getAROMMovementsByLocation(location);
+            var container = document.getElementById(section + 'AromContainer');
+            if (!container) return;
+            
+            var html = '';
+            movements.forEach(function(movement, index) {
+                html += '<div class="assessment-row">';
+                html += '<label>' + movement + ':</label>';
+                html += '<input type="number" class="form-control" placeholder="Degrees" ';
+                html += 'onchange="updateAROMValue(\'' + section + '\', ' + index + ', \'' + movement + '\', this.value)">';
+                html += '</div>';
+            });
+            
+            container.innerHTML = html;
+            
+            // Initialize AROM data structure
+            if (!reportData[section + 'Findings'].objectiveFindings.arom) {
+                reportData[section + 'Findings'].objectiveFindings.arom = [];
+            }
+            
+            // Ensure AROM array has correct length
+            movements.forEach(function(movement, index) {
+                if (!reportData[section + 'Findings'].objectiveFindings.arom[index]) {
+                    reportData[section + 'Findings'].objectiveFindings.arom[index] = {
+                        movement: movement,
+                        value: ''
+                    };
+                }
+            });
+        }
+
+        function updateAROMValue(section, index, movement, value) {
+            if (!reportData[section + 'Findings'].objectiveFindings.arom[index]) {
+                reportData[section + 'Findings'].objectiveFindings.arom[index] = {};
+            }
+            reportData[section + 'Findings'].objectiveFindings.arom[index].movement = movement;
+            reportData[section + 'Findings'].objectiveFindings.arom[index].value = value;
+        }
+
+        // Muscle Power Fields Implementation
+        function generateMusclePowerFields(section, location, side) {
+            var muscleGroups = getMuscleGroupsByLocation(location);
+            var container = document.getElementById(section + 'MusclePowerContainer');
+            if (!container) return;
+            
+            var html = '';
+            var bilateralLocations = ['Back', 'Neck', 'Hand', 'Foot'];
+            var isBilateralLocation = bilateralLocations.includes(location);
+            
+            muscleGroups.forEach(function(group, index) {
+                html += '<div class="assessment-row">';
+                html += '<label>' + group.name + ':</label>';
+                
+                // Left side
+                var showLeft = isBilateralLocation || side === 'Bilateral' || side === 'Left' || !side;
+                html += '<select class="form-control left-grade" style="display: ' + (showLeft ? 'block' : 'none') + '" ';
+                html += 'onchange="updateMusclePowerValue(\'' + section + '\', ' + index + ', \'' + group.id + '\', \'left\', this.value)">';
+                html += '<option value="">Left</option>';
+                html += generateGradeOptions();
+                html += '</select>';
+                
+                // Right side
+                var showRight = isBilateralLocation || side === 'Bilateral' || side === 'Right' || !side;
+                if (group.bilateral || isBilateralLocation || side === 'Bilateral') {
+                    html += '<select class="form-control right-grade" style="display: ' + (showRight ? 'block' : 'none') + '" ';
+                    html += 'onchange="updateMusclePowerValue(\'' + section + '\', ' + index + ', \'' + group.id + '\', \'right\', this.value)">';
+                    html += '<option value="">Right</option>';
+                    html += generateGradeOptions();
+                    html += '</select>';
+                }
+                
+                html += '</div>';
+            });
+            
+            container.innerHTML = html;
+            
+            // Initialize muscle power data structure
+            if (!reportData[section + 'Findings'].objectiveFindings.musclePower) {
+                reportData[section + 'Findings'].objectiveFindings.musclePower = [];
+            }
+            
+            // Ensure muscle power array has correct length
+            muscleGroups.forEach(function(group, index) {
+                if (!reportData[section + 'Findings'].objectiveFindings.musclePower[index]) {
+                    reportData[section + 'Findings'].objectiveFindings.musclePower[index] = {
+                        muscleGroup: group.name,
+                        id: group.id,
+                        leftGrade: '',
+                        rightGrade: ''
+                    };
+                }
+            });
+        }
+
+        function generateGradeOptions() {
+            var grades = ['0/5', '1/5', '2/5', '3/5', '4/5', '5/5'];
+            var html = '';
+            grades.forEach(function(grade) {
+                html += '<option value="' + grade + '">' + grade + '</option>';
+            });
+            return html;
+        }
+
+        function updateMusclePowerValue(section, index, groupId, side, value) {
+            if (!reportData[section + 'Findings'].objectiveFindings.musclePower[index]) {
+                reportData[section + 'Findings'].objectiveFindings.musclePower[index] = {
+                    muscleGroup: '',
+                    id: groupId,
+                    leftGrade: '',
+                    rightGrade: ''
+                };
+            }
+            reportData[section + 'Findings'].objectiveFindings.musclePower[index][side + 'Grade'] = value;
+        }
+
+        function smartFillMusclePower(section) {
+            var smartFillSelect = document.getElementById(section + 'MusclePowerSmartFill');
+            var grade = smartFillSelect.value;
+            if (!grade) return;
+            
+            var muscleSelects = document.querySelectorAll('#' + section + 'MusclePowerContainer select');
+            muscleSelects.forEach(function(select) {
+                if (!select.value) { // Only fill empty fields
+                    select.value = grade;
+                    select.dispatchEvent(new Event('change'));
+                }
+            });
+            
+            smartFillSelect.value = ''; // Reset smart fill selector
+        }
+
+        function clearAllMusclePower(section) {
+            var muscleSelects = document.querySelectorAll('#' + section + 'MusclePowerContainer select');
+            muscleSelects.forEach(function(select) {
+                select.value = '';
+                select.dispatchEvent(new Event('change'));
+            });
+        }
+
+        // Myotome Fields Implementation
+        function generateMyotomeFields(section, location) {
+            var myotomeLevels = getMyotomeLevelsByLocation(location);
+            var container = document.getElementById(section + 'MyotomeFields');
+            if (!container) return;
+            
+            var html = '';
+            myotomeLevels.forEach(function(level, index) {
+                html += '<div class="assessment-row">';
+                html += '<label>' + level + ':</label>';
+                html += '<select class="form-control" ';
+                html += 'onchange="updateMyotomeValue(\'' + section + '\', ' + index + ', \'' + level + '\', \'left\', this.value)">';
+                html += '<option value="">Left</option>';
+                html += generateGradeOptions();
+                html += '</select>';
+                html += '<select class="form-control" ';
+                html += 'onchange="updateMyotomeValue(\'' + section + '\', ' + index + ', \'' + level + '\', \'right\', this.value)">';
+                html += '<option value="">Right</option>';
+                html += generateGradeOptions();
+                html += '</select>';
+                html += '</div>';
+            });
+            
+            container.innerHTML = html;
+            
+            // Initialize myotome data structure
+            if (!reportData[section + 'Findings'].objectiveFindings.myotome) {
+                reportData[section + 'Findings'].objectiveFindings.myotome = [];
+            }
+            
+            // Ensure myotome array has correct length
+            myotomeLevels.forEach(function(level, index) {
+                if (!reportData[section + 'Findings'].objectiveFindings.myotome[index]) {
+                    reportData[section + 'Findings'].objectiveFindings.myotome[index] = {
+                        level: level,
+                        leftGrade: '',
+                        rightGrade: ''
+                    };
+                }
+            });
+        }
+
+        function updateMyotomeValue(section, index, level, side, value) {
+            if (!reportData[section + 'Findings'].objectiveFindings.myotome[index]) {
+                reportData[section + 'Findings'].objectiveFindings.myotome[index] = {
+                    level: level,
+                    leftGrade: '',
+                    rightGrade: ''
+                };
+            }
+            reportData[section + 'Findings'].objectiveFindings.myotome[index][side + 'Grade'] = value;
+        }
+
+        function smartFillMyotome(section) {
+            var smartFillSelect = document.getElementById(section + 'MyotomeSmartFill');
+            var grade = smartFillSelect.value;
+            if (!grade) return;
+            
+            var myotomeSelects = document.querySelectorAll('#' + section + 'MyotomeFields select');
+            myotomeSelects.forEach(function(select) {
+                if (!select.value) { // Only fill empty fields
+                    select.value = grade;
+                    select.dispatchEvent(new Event('change'));
+                }
+            });
+            
+            smartFillSelect.value = ''; // Reset smart fill selector
+        }
+
+        function clearAllMyotome(section) {
+            var myotomeSelects = document.querySelectorAll('#' + section + 'MyotomeFields select');
+            myotomeSelects.forEach(function(select) {
+                select.value = '';
+                select.dispatchEvent(new Event('change'));
+            });
+        }
+
+        // Small Joints Implementation
+        function generateSmallJointFields(section, location) {
+            var container = document.getElementById(section + 'SmallJointFields');
+            if (!container) return;
+            
+            // Initialize with one joint field
+            if (!reportData[section + 'Findings'].objectiveFindings.smallJointRom) {
+                reportData[section + 'Findings'].objectiveFindings.smallJointRom = [];
+            }
+            
+            renderSmallJointFields(section, location);
+        }
+
+        function renderSmallJointFields(section, location) {
+            var container = document.getElementById(section + 'SmallJointFields');
+            var joints = getSmallJointsByLocation(location);
+            var smallJointData = reportData[section + 'Findings'].objectiveFindings.smallJointRom;
+            
+            var html = '';
+            smallJointData.forEach(function(joint, index) {
+                html += '<div class="assessment-row">';
+                html += '<select class="form-control" onchange="updateSmallJointType(\'' + section + '\', ' + index + ', this.value)">';
+                html += '<option value="">Select Joint</option>';
+                joints.forEach(function(jointType) {
+                    html += '<option value="' + jointType + '"' + (joint.joint === jointType ? ' selected' : '') + '>' + jointType + '</option>';
+                });
+                html += '</select>';
+                html += '<input type="number" class="form-control" placeholder="Degrees" value="' + (joint.value || '') + '" ';
+                html += 'onchange="updateSmallJointValue(\'' + section + '\', ' + index + ', this.value)">';
+                html += '<button type="button" class="btn btn-secondary btn-small" onclick="removeSmallJoint(\'' + section + '\', ' + index + ')">Remove</button>';
+                html += '</div>';
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function addSmallJoint(section) {
+            if (!reportData[section + 'Findings'].objectiveFindings.smallJointRom) {
+                reportData[section + 'Findings'].objectiveFindings.smallJointRom = [];
+            }
+            
+            reportData[section + 'Findings'].objectiveFindings.smallJointRom.push({
+                joint: '',
+                value: ''
+            });
+            
+            var location = reportData[section + 'Findings'].complaints.painRegion;
+            renderSmallJointFields(section, location);
+        }
+
+        function removeSmallJoint(section, index) {
+            reportData[section + 'Findings'].objectiveFindings.smallJointRom.splice(index, 1);
+            var location = reportData[section + 'Findings'].complaints.painRegion;
+            renderSmallJointFields(section, location);
+        }
+
+        function updateSmallJointType(section, index, value) {
+            if (reportData[section + 'Findings'].objectiveFindings.smallJointRom[index]) {
+                reportData[section + 'Findings'].objectiveFindings.smallJointRom[index].joint = value;
+            }
+        }
+
+        function updateSmallJointValue(section, index, value) {
+            if (reportData[section + 'Findings'].objectiveFindings.smallJointRom[index]) {
+                reportData[section + 'Findings'].objectiveFindings.smallJointRom[index].value = value;
+            }
+        }
+
+        // Hand Grip Strength Implementation
+        function generateHandGripFields(section) {
+            var container = document.getElementById(section + 'HandGripFields');
+            if (!container) return;
+            
+            var html = '';
+            html += '<div class="grid-2">';
+            html += '<div class="form-group">';
+            html += '<label>Left Hand Grip (kgf):</label>';
+            html += '<input type="number" class="form-control" onchange="updateNestedField(\'' + section + 'Findings.objectiveFindings.handGripStrength.leftHandGrip\', this.value)">';
+            html += '</div>';
+            html += '<div class="form-group">';
+            html += '<label>Right Hand Grip (kgf):</label>';
+            html += '<input type="number" class="form-control" onchange="updateNestedField(\'' + section + 'Findings.objectiveFindings.handGripStrength.rightHandGrip\', this.value)">';
+            html += '</div>';
+            html += '<div class="form-group">';
+            html += '<label>Left Pinch Grip (kgf):</label>';
+            html += '<input type="number" class="form-control" onchange="updateNestedField(\'' + section + 'Findings.objectiveFindings.handGripStrength.leftPinchGrip\', this.value)">';
+            html += '</div>';
+            html += '<div class="form-group">';
+            html += '<label>Right Pinch Grip (kgf):</label>';
+            html += '<input type="number" class="form-control" onchange="updateNestedField(\'' + section + 'Findings.objectiveFindings.handGripStrength.rightPinchGrip\', this.value)">';
+            html += '</div>';
+            html += '<div class="form-group">';
+            html += '<label>Left Lateral Pinch (kgf):</label>';
+            html += '<input type="number" class="form-control" onchange="updateNestedField(\'' + section + 'Findings.objectiveFindings.handGripStrength.leftLateralPinch\', this.value)">';
+            html += '</div>';
+            html += '<div class="form-group">';
+            html += '<label>Right Lateral Pinch (kgf):</label>';
+            html += '<input type="number" class="form-control" onchange="updateNestedField(\'' + section + 'Findings.objectiveFindings.handGripStrength.rightLateralPinch\', this.value)">';
+            html += '</div>';
+            html += '</div>';
+            
+            container.innerHTML = html;
+        }
+
+        // PHASE 3: OBJECTIVE FINDINGS COMPLETION
+
+        // Toggle additional fields
+        function toggleAdditionalField(section, fieldType, checked) {
+            var fieldsContainer = document.getElementById(section + fieldType.charAt(0).toUpperCase() + fieldType.slice(1) + 'Fields');
+            if (fieldsContainer) {
+                if (checked) {
+                    fieldsContainer.classList.remove('hidden');
+                } else {
+                    fieldsContainer.classList.add('hidden');
+                }
+            }
+            
+            // Update data structure
+            if (fieldType === 'tenderness') {
+                reportData[section + 'Findings'].objectiveFindings.tenderness.present = checked;
+            }
+        }
+
+        // Sensation status update
+        function updateSensationStatus(section, status) {
+            reportData[section + 'Findings'].objectiveFindings.sensation.status = status;
+            
+            var abnormalFields = document.getElementById(section + 'SensationAbnormalFields');
+            if (abnormalFields) {
+                if (status === 'Abnormal') {
+                    abnormalFields.classList.remove('hidden');
+                } else {
+                    abnormalFields.classList.add('hidden');
+                }
+            }
+        }
+
+        // Special Tests Implementation
+        function addSpecialTest(section) {
+            if (!reportData[section + 'Findings'].objectiveFindings.specialTests) {
+                reportData[section + 'Findings'].objectiveFindings.specialTests = [];
+            }
+            
+            reportData[section + 'Findings'].objectiveFindings.specialTests.push({
+                name: '',
+                result: ''
+            });
+            
+            renderSpecialTests(section);
+        }
+
+        function renderSpecialTests(section) {
+            var container = document.getElementById(section + 'SpecialTestsContainer');
+            var specialTests = reportData[section + 'Findings'].objectiveFindings.specialTests;
+            
+            var html = '';
+            specialTests.forEach(function(test, index) {
+                html += '<div class="assessment-row">';
+                html += '<input type="text" class="form-control" placeholder="Test Name" value="' + (test.name || '') + '" ';
+                html += 'onchange="updateSpecialTestName(\'' + section + '\', ' + index + ', this.value)">';
+                html += '<select class="form-control" onchange="updateSpecialTestResult(\'' + section + '\', ' + index + ', this.value)">';
+                html += '<option value="">Select Result</option>';
+                html += '<option value="Positive"' + (test.result === 'Positive' ? ' selected' : '') + '>Positive</option>';
+                html += '<option value="Negative"' + (test.result === 'Negative' ? ' selected' : '') + '>Negative</option>';
+                html += '</select>';
+                html += '<button type="button" class="btn btn-secondary btn-small" onclick="removeSpecialTest(\'' + section + '\', ' + index + ')">Remove</button>';
+                html += '</div>';
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function updateSpecialTestName(section, index, value) {
+            if (reportData[section + 'Findings'].objectiveFindings.specialTests[index]) {
+                reportData[section + 'Findings'].objectiveFindings.specialTests[index].name = value;
+            }
+        }
+
+        function updateSpecialTestResult(section, index, value) {
+            if (reportData[section + 'Findings'].objectiveFindings.specialTests[index]) {
+                reportData[section + 'Findings'].objectiveFindings.specialTests[index].result = value;
+            }
+        }
+
+        function removeSpecialTest(section, index) {
+            reportData[section + 'Findings'].objectiveFindings.specialTests.splice(index, 1);
+            renderSpecialTests(section);
+        }
+
+        // Questionnaire options update
+        function updateQuestionnaireOptions(section, location) {
+            var questionnaires = getQuestionnairesByLocation(location);
+            var select = document.getElementById(section + 'Questionnaire');
+            if (!select) return;
+            
+            var html = '<option value="">Select Questionnaire</option>';
+            questionnaires.forEach(function(questionnaire) {
+                html += '<option value="' + questionnaire + '">' + questionnaire + '</option>';
+            });
+            
+            select.innerHTML = html;
+        }
+
+        // Toggle "Not tested" functionality
+        function toggleNotTested(section, fieldType, checked) {
+            var containers = {
+                'arom': section + 'AromContainer',
+                'musclePower': section + 'MusclePowerContainer',
+                'myotome': section + 'MyotomeFields',
+                'smallJoint': section + 'SmallJointFields',
+                'handGrip': section + 'HandGripFields'
+            };
+            
+            var container = document.getElementById(containers[fieldType]);
+            if (container) {
+                if (checked) {
+                    container.style.display = 'none';
+                } else {
+                    container.style.display = 'block';
+                }
+            }
+        }
+
+        // PHASE 4: INTEGRATION & ENHANCEMENT
+
+        // Enhanced copy functionality
+        function copyFromInitial(targetSection) {
+            if (targetSection === 'interim') {
+                reportData.interimFindings = JSON.parse(JSON.stringify(reportData.initialFindings));
+                reportData.interimFindings.date = getCurrentDate();
+                populateInterimFields();
+                regenerateAllFields('interim');
+            } else if (targetSection === 'final') {
+                reportData.finalFindings = JSON.parse(JSON.stringify(reportData.initialFindings));
+                reportData.finalFindings.date = getCurrentDate();
+                populateFinalFields();
+                regenerateAllFields('final');
+            }
+        }
+
+        function copyFromInterim(targetSection) {
+            if (targetSection === 'final') {
+                reportData.finalFindings = JSON.parse(JSON.stringify(reportData.interimFindings));
+                reportData.finalFindings.date = getCurrentDate();
+                populateFinalFields();
+                regenerateAllFields('final');
+            }
+        }
+
+        // Dynamic discharge fields
+        function updateDischargeType(dischargeType) {
+            reportData.dischargeSummary.componentData.dischargeType = dischargeType;
+            
+            var fieldsContainer = document.getElementById('dischargeFields');
+            var html = '';
+            
+            switch (dischargeType) {
+                case 'Discharged':
+                case 'Discharged with static progress':
+                    html += '<div class="form-group">';
+                    html += '<label>Discharge Date:</label>';
+                    html += '<input type="date" class="form-control" onchange="updateNestedField(\'dischargeSummary.componentData.dischargeDate\', this.value)">';
+                    html += '</div>';
+                    break;
+                case 'Still receiving physiotherapy':
+                    html += '<div class="form-group">';
+                    html += '<label>Scheduled Appointment Date:</label>';
+                    html += '<input type="date" class="form-control" onchange="updateNestedField(\'dischargeSummary.componentData.scheduledAppointmentDate\', this.value)">';
+                    html += '</div>';
+                    break;
+                case 'Defaulted':
+                    html += '<div class="form-group">';
+                    html += '<label>Default Date:</label>';
+                    html += '<input type="date" class="form-control" onchange="updateNestedField(\'dischargeSummary.componentData.defaultDate\', this.value)">';
+                    html += '</div>';
+                    break;
+                case 'Cancelled':
+                    html += '<div class="form-group">';
+                    html += '<label>Cancellation Date:</label>';
+                    html += '<input type="date" class="form-control" onchange="updateNestedField(\'dischargeSummary.componentData.cancellationDate\', this.value)">';
+                    html += '</div>';
+                    html += '<div class="form-group">';
+                    html += '<label>Cancellation Reason:</label>';
+                    html += '<textarea class="form-control" onchange="updateNestedField(\'dischargeSummary.componentData.cancellationReason\', this.value)"></textarea>';
+                    html += '</div>';
+                    break;
+            }
+            
+            fieldsContainer.innerHTML = html;
+        }
+
+        // Event handlers for complaints and pain region changes
+        function updateComplaintsSide(section, side) {
+            updateNestedField(section + 'Findings.complaints.side', side);
+            var location = reportData[section + 'Findings'].complaints.painRegion;
+            if (location) {
+                updateFieldVisibility(section, location, side);
+            }
+        }
+
+        function updatePainRegion(section, location) {
+            updateNestedField(section + 'Findings.complaints.painRegion', location);
+            var side = reportData[section + 'Findings'].complaints.side;
+            generateClinicalFields(section, location, side);
+        }
+
+        // Utility functions from original lite app
+        function updateField(fieldName, value) {
+            reportData[fieldName] = value;
+        }
+
+        function updateNestedField(fieldPath, value) {
+            var keys = fieldPath.split('.');
+            var obj = reportData;
+            
+            for (var i = 0; i < keys.length - 1; i++) {
+                if (!obj[keys[i]]) {
+                    obj[keys[i]] = {};
+                }
+                obj = obj[keys[i]];
+            }
+            
+            obj[keys[keys.length - 1]] = value;
+        }
+
+        function updateTreatmentMethod(treatment, checked) {
+            var treatments = reportData.treatments;
+            var existingIndex = -1;
+            
+            for (var i = 0; i < treatments.length; i++) {
+                if (treatments[i].method === treatment) {
+                    existingIndex = i;
+                    break;
+                }
+            }
+            
+            if (checked && existingIndex === -1) {
+                treatments.push({
+                    method: treatment,
+                    area: ''
+                });
+            } else if (!checked && existingIndex !== -1) {
+                treatments.splice(existingIndex, 1);
+            }
+        }
+
+        function showSection(sectionNumber) {
+            var sections = document.getElementsByClassName('section');
+            for (var i = 0; i < sections.length; i++) {
+                sections[i].classList.remove('active');
+            }
+            
+            var tabs = document.getElementsByClassName('nav-tab');
+            for (var i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove('active');
+            }
+            
+            document.getElementById('section' + sectionNumber).classList.add('active');
+            tabs[sectionNumber - 1].classList.add('active');
+        }
+
+        function showClinicalTab(tabName) {
+            var contents = document.getElementsByClassName('clinical-content');
+            for (var i = 0; i < contents.length; i++) {
+                contents[i].classList.remove('active');
+            }
+            
+            var tabs = document.getElementsByClassName('clinical-tab');
+            for (var i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove('active');
+            }
+            
+            document.getElementById(tabName + 'Clinical').classList.add('active');
+            
+            var targetTab = document.querySelector('[onclick="showClinicalTab(\'' + tabName + '\')"]');
+            if (targetTab) {
+                targetTab.classList.add('active');
+            }
+        }
+
+        function getCurrentDate() {
+            var today = new Date();
+            var year = today.getFullYear();
+            var month = String(today.getMonth() + 1).padStart(2, '0');
+            var day = String(today.getDate()).padStart(2, '0');
+            return year + '-' + month + '-' + day;
+        }
+
+        function populateInterimFields() {
+            document.getElementById('interimDate').value = reportData.interimFindings.date || '';
+            document.getElementById('interimComplaintsSide').value = reportData.interimFindings.complaints.side || '';
+            document.getElementById('interimPainRegion').value = reportData.interimFindings.complaints.painRegion || '';
+            document.getElementById('interimPainIntensity').value = reportData.interimFindings.complaints.painIntensity || '';
+            document.getElementById('interimOtherSymptoms').value = reportData.interimFindings.complaints.otherSymptoms || '';
+            document.getElementById('interimImprovement').value = reportData.interimFindings.complaints.improvement || '';
+            document.getElementById('interimAssessment').value = reportData.interimFindings.assessment || '';
+            document.getElementById('interimPlan').value = reportData.interimFindings.plan || '';
+        }
+
+        function populateFinalFields() {
+            document.getElementById('finalDate').value = reportData.finalFindings.date || '';
+            document.getElementById('finalComplaintsSide').value = reportData.finalFindings.complaints.side || '';
+            document.getElementById('finalPainRegion').value = reportData.finalFindings.complaints.painRegion || '';
+            document.getElementById('finalPainIntensity').value = reportData.finalFindings.complaints.painIntensity || '';
+            document.getElementById('finalOtherSymptoms').value = reportData.finalFindings.complaints.otherSymptoms || '';
+            document.getElementById('finalImprovement').value = reportData.finalFindings.complaints.improvement || '';
+            document.getElementById('finalAssessment').value = reportData.finalFindings.assessment || '';
+            document.getElementById('finalPlan').value = reportData.finalFindings.plan || '';
+        }
+
+        function populateGeneratedFields(section) {
+            // Populate AROM fields
+            var aromData = reportData[section + 'Findings'].objectiveFindings.arom;
+            if (aromData) {
+                aromData.forEach(function(arom, index) {
+                    var inputs = document.querySelectorAll('#' + section + 'AromContainer input');
+                    if (inputs[index]) {
+                        inputs[index].value = arom.value || '';
+                    }
+                });
+            }
+            
+            // Populate muscle power fields
+            var musclePowerData = reportData[section + 'Findings'].objectiveFindings.musclePower;
+            if (musclePowerData) {
+                musclePowerData.forEach(function(muscle, index) {
+                    var rows = document.querySelectorAll('#' + section + 'MusclePowerContainer .assessment-row');
+                    if (rows[index]) {
+                        var leftSelect = rows[index].querySelector('.left-grade');
+                        var rightSelect = rows[index].querySelector('.right-grade');
+                        if (leftSelect) leftSelect.value = muscle.leftGrade || '';
+                        if (rightSelect) rightSelect.value = muscle.rightGrade || '';
+                    }
+                });
+            }
+            
+            // Populate myotome fields
+            var myotomeData = reportData[section + 'Findings'].objectiveFindings.myotome;
+            if (myotomeData) {
+                myotomeData.forEach(function(myotome, index) {
+                    var selects = document.querySelectorAll('#' + section + 'MyotomeFields .assessment-row:nth-child(' + (index + 1) + ') select');
+                    if (selects[0]) selects[0].value = myotome.leftGrade || '';
+                    if (selects[1]) selects[1].value = myotome.rightGrade || '';
+                });
+            }
+            
+            // Populate hand grip strength fields
+            var handGripData = reportData[section + 'Findings'].objectiveFindings.handGripStrength;
+            if (handGripData) {
+                var handGripInputs = document.querySelectorAll('#' + section + 'HandGripFields input');
+                if (handGripInputs[0]) handGripInputs[0].value = handGripData.leftHandGrip || '';
+                if (handGripInputs[1]) handGripInputs[1].value = handGripData.rightHandGrip || '';
+                if (handGripInputs[2]) handGripInputs[2].value = handGripData.leftPinchGrip || '';
+                if (handGripInputs[3]) handGripInputs[3].value = handGripData.rightPinchGrip || '';
+                if (handGripInputs[4]) handGripInputs[4].value = handGripData.leftLateralPinch || '';
+                if (handGripInputs[5]) handGripInputs[5].value = handGripData.rightLateralPinch || '';
+            }
+            
+            // Render small joints and special tests
+            var location = reportData[section + 'Findings'].complaints.painRegion;
+            if (location === 'Hand' || location === 'Foot') {
+                renderSmallJointFields(section, location);
+            }
+            renderSpecialTests(section);
+        }
+
+        function generateDataString() {
+            try {
+                var dataString = JSON.stringify(reportData, null, 2);
+                document.getElementById('exportOutput').value = dataString;
+                alert('Data string generated successfully! All clinical assessment data is included and compatible with the full app.');
+            } catch (error) {
+                alert('Error generating data string: ' + error.message);
+            }
+        }
+
+        function copyDataString() {
+            var output = document.getElementById('exportOutput');
+            if (!output.value) {
+                generateDataString();
+            }
+            
+            output.select();
+            document.execCommand('copy');
+            alert('Data string copied to clipboard!');
+        }
+
+        function fillMockData() {
+            reportData = {
+                ourRef: 'REF001',
+                ourRef2: 'SUB001',
+                yourRef: 'YOUR123',
+                yourRefDate: '2025-01-01',
+                reportDate: '2025-01-15',
+                recipient: 'Dr. Smith',
+                patientName: 'CHAN, T. M.',
+                patientSex: 'Male',
+                patientAge: '45',
+                hkidNo: 'A123456(7)',
+                ptOpdNo: 'PT001234',
+                diagnosis: 'Lower back pain with muscle spasm',
+                department: 'Orthopedics',
+                hospital: 'Tuen Mun Hospital',
+                totalSessions: '8',
+                registrationDate: '2024-12-01',
+                startDate: '2024-12-15',
+                endDate: '2025-01-15',
+                caseTherapists: 'Jane Smith, PT',
+                reportWrittenBy: 'Jane Smith',
+                attendedSessions: '8',
+                defaultedSessions: '0',
+                initialFindings: {
+                    date: '2024-12-15',
+                    complaints: {
+                        side: 'Bilateral',
+                        painRegion: 'Back',
+                        painIntensity: '8',
+                        otherSymptoms: 'Muscle stiffness, reduced mobility',
+                        improvement: '0 out of 10'
+                    },
+                    objectiveFindings: {
+                        arom: [
+                            {movement: 'Flexion', value: '30'},
+                            {movement: 'Extension', value: '10'},
+                            {movement: 'Left Lateral Flexion', value: '15'},
+                            {movement: 'Right Lateral Flexion', value: '15'},
+                            {movement: 'Left Rotation', value: '20'},
+                            {movement: 'Right Rotation', value: '20'}
+                        ],
+                        musclePower: [
+                            {muscleGroup: 'Erector Spinae', id: 'erectorSpinae', leftGrade: '3/5', rightGrade: '3/5'},
+                            {muscleGroup: 'Latissimus Dorsi', id: 'latissimusDorsi', leftGrade: '4/5', rightGrade: '4/5'}
+                        ],
+                        myotome: [
+                            {level: 'L2', leftGrade: '4/5', rightGrade: '4/5'},
+                            {level: 'L3', leftGrade: '4/5', rightGrade: '4/5'},
+                            {level: 'L4', leftGrade: '3/5', rightGrade: '3/5'},
+                            {level: 'L5', leftGrade: '3/5', rightGrade: '3/5'},
+                            {level: 'S1', leftGrade: '4/5', rightGrade: '4/5'}
+                        ],
+                        smallJointRom: [],
+                        handGripStrength: {
+                            leftHandGrip: '',
+                            rightHandGrip: '',
+                            leftPinchGrip: '',
+                            rightPinchGrip: '',
+                            leftLateralPinch: '',
+                            rightLateralPinch: ''
+                        },
+                        tenderness: {
+                            present: true,
+                            area: 'Lower lumbar region, bilateral paraspinal muscles'
+                        },
+                        swelling: {
+                            present: 'No'
+                        },
+                        temperature: {
+                            increased: 'No'
+                        },
+                        sensation: {
+                            status: 'Normal',
+                            reductionPercentage: '',
+                            area: ''
+                        },
+                        reflex: {
+                            status: 'Normal'
+                        },
+                        gait: {
+                            walkingAid: 'Unaided',
+                            walkingStability: 'Fair',
+                            weightBearing: 'Full weight bearing'
+                        },
+                        specialTests: [
+                            {name: 'Straight Leg Raise', result: 'Positive'},
+                            {name: 'Slump Test', result: 'Positive'}
+                        ],
+                        questionnaire: {
+                            type: 'Roland-Morris Disability Questionnaire',
+                            score: '18'
+                        },
+                        observation: 'Reduced lumbar flexion, visible muscle spasm in lower back, tenderness over L4-L5 region'
+                    },
+                    assessment: 'Mechanical lower back pain with associated muscle spasm and functional limitation',
+                    plan: 'Manual therapy, progressive exercise program, heat therapy, patient education'
+                },
+                interimFindings: {
+                    date: '2025-01-01',
+                    complaints: {
+                        side: 'Bilateral',
+                        painRegion: 'Back',
+                        painIntensity: '5',
+                        otherSymptoms: 'Reduced muscle stiffness, improved mobility',
+                        improvement: '5 out of 10'
+                    },
+                    objectiveFindings: {
+                        arom: [
+                            {movement: 'Flexion', value: '45'},
+                            {movement: 'Extension', value: '15'},
+                            {movement: 'Left Lateral Flexion', value: '20'},
+                            {movement: 'Right Lateral Flexion', value: '20'},
+                            {movement: 'Left Rotation', value: '25'},
+                            {movement: 'Right Rotation', value: '25'}
+                        ],
+                        musclePower: [
+                            {muscleGroup: 'Erector Spinae', id: 'erectorSpinae', leftGrade: '4/5', rightGrade: '4/5'},
+                            {muscleGroup: 'Latissimus Dorsi', id: 'latissimusDorsi', leftGrade: '4/5', rightGrade: '4/5'}
+                        ],
+                        myotome: [
+                            {level: 'L2', leftGrade: '4/5', rightGrade: '4/5'},
+                            {level: 'L3', leftGrade: '4/5', rightGrade: '4/5'},
+                            {level: 'L4', leftGrade: '4/5', rightGrade: '4/5'},
+                            {level: 'L5', leftGrade: '4/5', rightGrade: '4/5'},
+                            {level: 'S1', leftGrade: '4/5', rightGrade: '4/5'}
+                        ],
+                        smallJointRom: [],
+                        handGripStrength: {
+                            leftHandGrip: '',
+                            rightHandGrip: '',
+                            leftPinchGrip: '',
+                            rightPinchGrip: '',
+                            leftLateralPinch: '',
+                            rightLateralPinch: ''
+                        },
+                        tenderness: {
+                            present: true,
+                            area: 'Mild tenderness over L4-L5 region'
+                        },
+                        swelling: {
+                            present: 'No'
+                        },
+                        temperature: {
+                            increased: 'No'
+                        },
+                        sensation: {
+                            status: 'Normal',
+                            reductionPercentage: '',
+                            area: ''
+                        },
+                        reflex: {
+                            status: 'Normal'
+                        },
+                        gait: {
+                            walkingAid: 'Unaided',
+                            walkingStability: 'Good',
+                            weightBearing: 'Full weight bearing'
+                        },
+                        specialTests: [
+                            {name: 'Straight Leg Raise', result: 'Negative'},
+                            {name: 'Slump Test', result: 'Negative'}
+                        ],
+                        questionnaire: {
+                            type: 'Roland-Morris Disability Questionnaire',
+                            score: '8'
+                        },
+                        observation: 'Improved lumbar flexion, less muscle spasm, reduced tenderness'
+                    },
+                    assessment: 'Good progress with current treatment approach, improved functional mobility',
+                    plan: 'Continue manual therapy and exercise program, progress to strengthening exercises'
+                },
+                finalFindings: {
+                    date: '2025-01-15',
+                    complaints: {
+                        side: 'Left',
+                        painRegion: 'Back',
+                        painIntensity: '2',
+                        otherSymptoms: 'Minimal stiffness, good mobility',
+                        improvement: '8 out of 10'
+                    },
+                    objectiveFindings: {
+                        arom: [
+                            {movement: 'Flexion', value: '60'},
+                            {movement: 'Extension', value: '20'},
+                            {movement: 'Left Lateral Flexion', value: '25'},
+                            {movement: 'Right Lateral Flexion', value: '25'},
+                            {movement: 'Left Rotation', value: '30'},
+                            {movement: 'Right Rotation', value: '30'}
+                        ],
+                        musclePower: [
+                            {muscleGroup: 'Erector Spinae', id: 'erectorSpinae', leftGrade: '5/5', rightGrade: '5/5'},
+                            {muscleGroup: 'Latissimus Dorsi', id: 'latissimusDorsi', leftGrade: '5/5', rightGrade: '5/5'}
+                        ],
+                        myotome: [
+                            {level: 'L2', leftGrade: '5/5', rightGrade: '5/5'},
+                            {level: 'L3', leftGrade: '5/5', rightGrade: '5/5'},
+                            {level: 'L4', leftGrade: '5/5', rightGrade: '5/5'},
+                            {level: 'L5', leftGrade: '5/5', rightGrade: '5/5'},
+                            {level: 'S1', leftGrade: '5/5', rightGrade: '5/5'}
+                        ],
+                        smallJointRom: [],
+                        handGripStrength: {
+                            leftHandGrip: '',
+                            rightHandGrip: '',
+                            leftPinchGrip: '',
+                            rightPinchGrip: '',
+                            leftLateralPinch: '',
+                            rightLateralPinch: ''
+                        },
+                        tenderness: {
+                            present: false,
+                            area: ''
+                        },
+                        swelling: {
+                            present: 'No'
+                        },
+                        temperature: {
+                            increased: 'No'
+                        },
+                        sensation: {
+                            status: 'Normal',
+                            reductionPercentage: '',
+                            area: ''
+                        },
+                        reflex: {
+                            status: 'Normal'
+                        },
+                        gait: {
+                            walkingAid: 'Unaided',
+                            walkingStability: 'Good',
+                            weightBearing: 'Full weight bearing'
+                        },
+                        specialTests: [
+                            {name: 'Straight Leg Raise', result: 'Negative'},
+                            {name: 'Slump Test', result: 'Negative'}
+                        ],
+                        questionnaire: {
+                            type: 'Roland-Morris Disability Questionnaire',
+                            score: '2'
+                        },
+                        observation: 'Normal lumbar range of motion, no muscle spasm, minimal tenderness'
+                    },
+                    assessment: 'Significant improvement achieved, functional goals met, ready for discharge',
+                    plan: 'Home exercise program for maintenance, return to normal activities gradually'
+                },
+                treatments: [
+                    { method: 'Manual therapy', area: '' },
+                    { method: 'Exercise therapy', area: '' },
+                    { method: 'Hot pack', area: '' },
+                    { method: 'Ultrasound therapy', area: '' }
+                ],
+                otherTreatment: 'Patient education on proper body mechanics and ergonomics',
+                dischargeSummary: {
+                    componentData: {
+                        dischargeType: 'Discharged',
+                        dischargeDate: '2025-01-15',
+                        defaultDate: '',
+                        cancellationDate: '',
+                        scheduledAppointmentDate: '',
+                        cancellationReason: '',
+                        finalOutcome: 'Patient achieved significant pain reduction from 8/10 to 2/10. Functional improvement with return to normal daily activities. Full range of motion restored.',
+                        recommendations: 'Continue home exercise program 3x per week. Return to physiotherapy if symptoms recur. Maintain proper posture and body mechanics. Gradual return to full activities.'
+                    }
+                },
+                consentDate: '2025-01-15',
+                declarationName: 'Jane Smith',
+                declarationTitle: 'Senior Physiotherapist',
+                educationQualifications: 'Bachelor of Physiotherapy, Master of Sports Physiotherapy'
+            };
+            
+            updateAllFormFields();
+            
+            // Generate clinical fields for initial findings
+            generateClinicalFields('initial', 'Back', 'Bilateral');
+            populateGeneratedFields('initial');
+            
+            alert('Comprehensive mock data filled successfully! Includes complete clinical assessment with AROM, muscle power, myotome, special tests, and questionnaire data.');
+        }
+
+        function updateAllFormFields() {
+            // Section 1
+            document.getElementById('ourRef').value = reportData.ourRef || '';
+            document.getElementById('ourRef2').value = reportData.ourRef2 || '';
+            document.getElementById('yourRef').value = reportData.yourRef || '';
+            document.getElementById('yourRefDate').value = reportData.yourRefDate || '';
+            document.getElementById('reportDate').value = reportData.reportDate || '';
+            document.getElementById('recipient').value = reportData.recipient || '';
+            
+            // Section 2
+            document.getElementById('patientName').value = reportData.patientName || '';
+            document.getElementById('patientSex').value = reportData.patientSex || '';
+            document.getElementById('patientAge').value = reportData.patientAge || '';
+            document.getElementById('hkidNo').value = reportData.hkidNo || '';
+            document.getElementById('ptOpdNo').value = reportData.ptOpdNo || '';
+            
+            // Section 3
+            document.getElementById('diagnosis').value = reportData.diagnosis || '';
+            
+            // Section 4
+            document.getElementById('department').value = reportData.department || '';
+            document.getElementById('hospital').value = reportData.hospital || '';
+            
+            // Section 5
+            document.getElementById('totalSessions').value = reportData.totalSessions || '';
+            document.getElementById('registrationDate').value = reportData.registrationDate || '';
+            document.getElementById('startDate').value = reportData.startDate || '';
+            document.getElementById('endDate').value = reportData.endDate || '';
+            document.getElementById('caseTherapists').value = reportData.caseTherapists || '';
+            document.getElementById('reportWrittenBy').value = reportData.reportWrittenBy || '';
+            document.getElementById('attendedSessions').value = reportData.attendedSessions || '';
+            document.getElementById('defaultedSessions').value = reportData.defaultedSessions || '';
+            
+            // Section 6 - Initial
+            document.getElementById('initialDate').value = reportData.initialFindings.date || '';
+            document.getElementById('initialComplaintsSide').value = reportData.initialFindings.complaints.side || '';
+            document.getElementById('initialPainRegion').value = reportData.initialFindings.complaints.painRegion || '';
+            document.getElementById('initialPainIntensity').value = reportData.initialFindings.complaints.painIntensity || '';
+            document.getElementById('initialOtherSymptoms').value = reportData.initialFindings.complaints.otherSymptoms || '';
+            document.getElementById('initialImprovement').value = reportData.initialFindings.complaints.improvement || '';
+            document.getElementById('initialAssessment').value = reportData.initialFindings.assessment || '';
+            document.getElementById('initialPlan').value = reportData.initialFindings.plan || '';
+            
+            // Section 6 - Interim
+            populateInterimFields();
+            
+            // Section 6 - Final
+            populateFinalFields();
+            
+            // Section 7 - Treatment checkboxes
+            var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            for (var i = 0; i < checkboxes.length; i++) {
+                checkboxes[i].checked = false;
+            }
+            
+            for (var j = 0; j < reportData.treatments.length; j++) {
+                var treatment = reportData.treatments[j].method;
+                var checkbox = document.querySelector('input[onchange*="' + treatment + '"]');
+                if (checkbox) {
+                    checkbox.checked = true;
+                }
+            }
+            
+            document.getElementById('otherTreatment').value = reportData.otherTreatment || '';
+            
+            // Section 8
+            document.getElementById('dischargeType').value = reportData.dischargeSummary.componentData.dischargeType || '';
+            document.getElementById('finalOutcome').value = reportData.dischargeSummary.componentData.finalOutcome || '';
+            document.getElementById('recommendations').value = reportData.dischargeSummary.componentData.recommendations || '';
+            
+            // Section 9
+            document.getElementById('consentDate').value = reportData.consentDate || '';
+            document.getElementById('declarationName').value = reportData.declarationName || '';
+            document.getElementById('declarationTitle').value = reportData.declarationTitle || '';
+            document.getElementById('educationQualifications').value = reportData.educationQualifications || '';
+        }
+
+        // Initialize the app
+        console.log('Complete Lite App initialized successfully - All phases implemented');
+        
+        // Initialize interim and final objective containers with same structure as initial
+        document.addEventListener('DOMContentLoaded', function() {
+            // Copy initial objective container structure to interim and final
+            var initialContainer = document.getElementById('initialObjectiveContainer');
+            var interimContainer = document.getElementById('interimObjectiveContainer');
+            var finalContainer = document.getElementById('finalObjectiveContainer');
+            
+            if (initialContainer && interimContainer && finalContainer) {
+                // Clone structure and update IDs for interim
+                var interimHTML = initialContainer.innerHTML.replace(/initial/g, 'interim');
+                interimContainer.innerHTML = interimHTML;
+                
+                // Clone structure and update IDs for final
+                var finalHTML = initialContainer.innerHTML.replace(/initial/g, 'final');
+                finalContainer.innerHTML = finalHTML;
+            }
+        });
+    </script>
+</body>
+</html>

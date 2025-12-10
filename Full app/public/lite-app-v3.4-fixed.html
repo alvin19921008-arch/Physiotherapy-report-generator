@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Physiotherapy Report Generator - Lite App v3.4 Fixed</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8fafc;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 0;
+            margin-bottom: 30px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .nav-tab {
+            padding: 12px 20px;
+            background-color: #e5e7eb;
+            border: none;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+            transition: all 0.2s;
+        }
+
+        .nav-tab.active {
+            background-color: #3b82f6;
+            color: white;
+        }
+
+        .nav-tab:hover:not(.active) {
+            background-color: #d1d5db;
+        }
+
+        .section {
+            display: none;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .section h2 {
+            color: #1f2937;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background-color: #3b82f6;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2563eb;
+        }
+
+        .btn-success {
+            background-color: #10b981;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #059669;
+        }
+
+        .btn-secondary {
+            background-color: #6b7280;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #4b5563;
+        }
+
+        .clinical-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .clinical-tab {
+            padding: 10px 20px;
+            background-color: #f3f4f6;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .clinical-tab.active {
+            background-color: #3b82f6;
+            color: white;
+        }
+
+        .clinical-content {
+            display: none;
+        }
+
+        .clinical-content.active {
+            display: block;
+        }
+
+        .export-section {
+            background: #f0f9ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+
+        .export-output {
+            width: 100%;
+            height: 200px;
+            font-family: monospace;
+            font-size: 12px;
+            background: white;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .nav-tabs {
+                flex-direction: column;
+            }
+            
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Physiotherapy Report Generator - Lite App v3.4 Fixed</h1>
+            <div class="subtitle">Corporate Portal Compatible | Syntax Error Free | Full Data Compatibility</div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showSection(1)">Section 1: Reference</button>
+            <button class="nav-tab" onclick="showSection(2)">Section 2: Patient Info</button>
+            <button class="nav-tab" onclick="showSection(3)">Section 3: Diagnosis</button>
+            <button class="nav-tab" onclick="showSection(4)">Section 4: Referral</button>
+            <button class="nav-tab" onclick="showSection(5)">Section 5: Duration</button>
+            <button class="nav-tab" onclick="showSection(6)">Section 6: Clinical</button>
+            <button class="nav-tab" onclick="showSection(7)">Section 7: Treatment</button>
+            <button class="nav-tab" onclick="showSection(8)">Section 8: Discharge</button>
+            <button class="nav-tab" onclick="showSection(9)">Section 9: Declaration</button>
+        </div>
+
+        <!-- Section 1: Reference Information -->
+        <div class="section active" id="section1">
+            <h2>Section 1: Medical Report Reference Information</h2>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Our Reference</label>
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                        <span>(</span>
+                        <input type="text" class="form-control" id="ourRef" onchange="updateField('ourRef', this.value)" style="flex: 1;">
+                        <span>) in PHY/OA/</span>
+                        <input type="text" class="form-control" id="ourRef2" onchange="updateField('ourRef2', this.value)" style="flex: 1;">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Your Reference</label>
+                    <input type="text" class="form-control" id="yourRef" onchange="updateField('yourRef', this.value)">
+                </div>
+                <div class="form-group">
+                    <label>Report Date</label>
+                    <input type="date" class="form-control" id="reportDate" onchange="updateField('reportDate', this.value)">
+                </div>
+                <div class="form-group">
+                    <label>Your Reference Date</label>
+                    <input type="date" class="form-control" id="yourRefDate" onchange="updateField('yourRefDate', this.value)">
+                </div>
+                <div class="form-group">
+                    <label>Recipient</label>
+                    <input type="text" class="form-control" id="recipient" onchange="updateField('recipient', this.value)">
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 2: Patient Information -->
+        <div class="section" id="section2">
+            <h2>Section 2: Patient Information</h2>
+            <div class="form-group">
+                <label>Name of Patient:</label>
+                <input type="text" class="form-control" id="patientName" onchange="updateField('patientName', this.value)" placeholder="e.g., CHAN Tai Man, input CHAN, T. M.">
+            </div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Sex</label>
+                    <select class="form-control" id="patientSex" onchange="updateField('patientSex', this.value)">
+                        <option value="">Select sex</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Age</label>
+                    <input type="number" class="form-control" id="patientAge" onchange="updateField('patientAge', this.value)">
+                </div>
+                <div class="form-group">
+                    <label>HKID No.</label>
+                    <input type="text" class="form-control" id="hkidNo" onchange="updateField('hkidNo', this.value)">
+                </div>
+                <div class="form-group">
+                    <label>Physiotherapy OPD No.</label>
+                    <input type="text" class="form-control" id="ptOpdNo" onchange="updateField('ptOpdNo', this.value)">
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 3: Primary Diagnosis -->
+        <div class="section" id="section3">
+            <h2>Section 3: Primary Diagnosis</h2>
+            <div class="form-group">
+                <label>Primary Diagnosis:</label>
+                <textarea class="form-control" id="diagnosis" onchange="updateField('diagnosis', this.value)"></textarea>
+            </div>
+        </div>
+
+        <!-- Section 4: Source of Referral -->
+        <div class="section" id="section4">
+            <h2>Section 4: Source of Referral</h2>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Department:</label>
+                    <input type="text" class="form-control" id="department" onchange="updateField('department', this.value)">
+                </div>
+                <div class="form-group">
+                    <label>Hospital:</label>
+                    <input type="text" class="form-control" id="hospital" onchange="updateField('hospital', this.value)">
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 5: Duration of Treatment -->
+        <div class="section" id="section5">
+            <h2>Section 5: Duration of Treatment</h2>
+            <div class="form-group">
+                <label>Total Number of Sessions</label>
+                <input type="number" class="form-control" id="totalSessions" onchange="updateField('totalSessions', this.value)">
+            </div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Date of Registration</label>
+                    <input type="date" class="form-control" id="registrationDate" onchange="updateField('registrationDate', this.value)">
+                </div>
+                <div class="form-group">
+                    <label>Start Date</label>
+                    <input type="date" class="form-control" id="startDate" onchange="updateField('startDate', this.value)">
+                </div>
+                <div class="form-group">
+                    <label>End Date</label>
+                    <input type="date" class="form-control" id="endDate" onchange="updateField('endDate', this.value)">
+                </div>
+                <div class="form-group">
+                    <label>Case Therapist(s)</label>
+                    <input type="text" class="form-control" id="caseTherapists" onchange="updateField('caseTherapists', this.value)">
+                </div>
+                <div class="form-group">
+                    <label>Report Written by</label>
+                    <input type="text" class="form-control" id="reportWrittenBy" onchange="updateField('reportWrittenBy', this.value)">
+                </div>
+                <div class="form-group">
+                    <label>Attended Sessions</label>
+                    <input type="number" class="form-control" id="attendedSessions" onchange="updateField('attendedSessions', this.value)">
+                </div>
+                <div class="form-group">
+                    <label>Defaulted Sessions</label>
+                    <input type="number" class="form-control" id="defaultedSessions" onchange="updateField('defaultedSessions', this.value)">
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 6: Clinical Information -->
+        <div class="section" id="section6">
+            <h2>Section 6: Clinical Information</h2>
+            
+            <!-- Clinical Tabs -->
+            <div class="clinical-tabs">
+                <button class="clinical-tab active" onclick="showClinicalTab('initial')">Initial Findings</button>
+                <button class="clinical-tab" onclick="showClinicalTab('interim')">Interim Findings</button>
+                <button class="clinical-tab" onclick="showClinicalTab('final')">Final Findings</button>
+            </div>
+
+            <!-- Initial Clinical Content -->
+            <div class="clinical-content active" id="initialClinical">
+                <h3>Initial Clinical Findings</h3>
+                <div class="form-group">
+                    <label>Date:</label>
+                    <input type="date" class="form-control" id="initialDate" onchange="updateNestedField('initialFindings.date', this.value)">
+                </div>
+                
+                <h4>I. Patient's Complaints</h4>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Side:</label>
+                        <select class="form-control" id="initialComplaintsSide" onchange="updateNestedField('initialFindings.complaints.side', this.value)">
+                            <option value="">Select Side</option>
+                            <option value="Right">Right</option>
+                            <option value="Left">Left</option>
+                            <option value="Bilateral">Bilateral</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Pain Region:</label>
+                        <select class="form-control" id="initialPainRegion" onchange="updateNestedField('initialFindings.complaints.painRegion', this.value)">
+                            <option value="">Select Region</option>
+                            <option value="Back">Back</option>
+                            <option value="Neck">Neck</option>
+                            <option value="Shoulder">Shoulder</option>
+                            <option value="Elbow">Elbow</option>
+                            <option value="Wrist">Wrist</option>
+                            <option value="Hand">Hand</option>
+                            <option value="Hip">Hip</option>
+                            <option value="Knee">Knee</option>
+                            <option value="Ankle">Ankle</option>
+                            <option value="Foot">Foot</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Pain Intensity (NPRS):</label>
+                        <input type="number" class="form-control" id="initialPainIntensity" min="0" max="10" onchange="updateNestedField('initialFindings.complaints.painIntensity', this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label>Other Symptoms:</label>
+                        <input type="text" class="form-control" id="initialOtherSymptoms" onchange="updateNestedField('initialFindings.complaints.otherSymptoms', this.value)">
+                    </div>
+                </div>
+                
+                <h4>II. Objective Findings</h4>
+                <div class="form-group">
+                    <label>Observation:</label>
+                    <textarea class="form-control" id="initialObservation" onchange="updateNestedField('initialFindings.objectiveFindings.observation', this.value)" placeholder="Clinical observations and findings"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Assessment:</label>
+                    <textarea class="form-control" id="initialAssessment" onchange="updateNestedField('initialFindings.assessment', this.value)" placeholder="Clinical assessment"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Plan:</label>
+                    <textarea class="form-control" id="initialPlan" onchange="updateNestedField('initialFindings.plan', this.value)" placeholder="Treatment plan"></textarea>
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <button type="button" class="btn btn-primary" onclick="copyFromInitial('interim')">Copy to Interim Findings</button>
+                    <button type="button" class="btn btn-primary" onclick="copyFromInitial('final')">Copy to Final Findings</button>
+                </div>
+            </div>
+
+            <!-- Interim Clinical Content -->
+            <div class="clinical-content" id="interimClinical">
+                <h3>Interim Clinical Findings</h3>
+                <div class="form-group">
+                    <label>Date:</label>
+                    <input type="date" class="form-control" id="interimDate" onchange="updateNestedField('interimFindings.date', this.value)">
+                </div>
+                
+                <h4>I. Patient's Complaints</h4>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Side:</label>
+                        <select class="form-control" id="interimComplaintsSide" onchange="updateNestedField('interimFindings.complaints.side', this.value)">
+                            <option value="">Select Side</option>
+                            <option value="Right">Right</option>
+                            <option value="Left">Left</option>
+                            <option value="Bilateral">Bilateral</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Pain Region:</label>
+                        <select class="form-control" id="interimPainRegion" onchange="updateNestedField('interimFindings.complaints.painRegion', this.value)">
+                            <option value="">Select Region</option>
+                            <option value="Back">Back</option>
+                            <option value="Neck">Neck</option>
+                            <option value="Shoulder">Shoulder</option>
+                            <option value="Elbow">Elbow</option>
+                            <option value="Wrist">Wrist</option>
+                            <option value="Hand">Hand</option>
+                            <option value="Hip">Hip</option>
+                            <option value="Knee">Knee</option>
+                            <option value="Ankle">Ankle</option>
+                            <option value="Foot">Foot</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Pain Intensity (NPRS):</label>
+                        <input type="number" class="form-control" id="interimPainIntensity" min="0" max="10" onchange="updateNestedField('interimFindings.complaints.painIntensity', this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label>Other Symptoms:</label>
+                        <input type="text" class="form-control" id="interimOtherSymptoms" onchange="updateNestedField('interimFindings.complaints.otherSymptoms', this.value)">
+                    </div>
+                </div>
+                
+                <h4>II. Objective Findings</h4>
+                <div class="form-group">
+                    <label>Observation:</label>
+                    <textarea class="form-control" id="interimObservation" onchange="updateNestedField('interimFindings.objectiveFindings.observation', this.value)" placeholder="Updated clinical observations"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Assessment:</label>
+                    <textarea class="form-control" id="interimAssessment" onchange="updateNestedField('interimFindings.assessment', this.value)" placeholder="Updated assessment"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Plan:</label>
+                    <textarea class="form-control" id="interimPlan" onchange="updateNestedField('interimFindings.plan', this.value)" placeholder="Updated treatment plan"></textarea>
+                </div>
+            </div>
+
+            <!-- Final Clinical Content -->
+            <div class="clinical-content" id="finalClinical">
+                <h3>Final Clinical Findings</h3>
+                <div style="margin-bottom: 20px;">
+                    <button type="button" class="btn btn-primary" onclick="copyFromInitial('final')">Copy from Initial Findings</button>
+                    <button type="button" class="btn btn-primary" onclick="copyFromInterim('final')">Copy from Interim Findings</button>
+                </div>
+                
+                <div class="form-group">
+                    <label>Date:</label>
+                    <input type="date" class="form-control" id="finalDate" onchange="updateNestedField('finalFindings.date', this.value)">
+                </div>
+                
+                <h4>I. Patient's Complaints</h4>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Side:</label>
+                        <select class="form-control" id="finalComplaintsSide" onchange="updateNestedField('finalFindings.complaints.side', this.value)">
+                            <option value="">Select Side</option>
+                            <option value="Right">Right</option>
+                            <option value="Left">Left</option>
+                            <option value="Bilateral">Bilateral</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Pain Region:</label>
+                        <select class="form-control" id="finalPainRegion" onchange="updateNestedField('finalFindings.complaints.painRegion', this.value)">
+                            <option value="">Select Region</option>
+                            <option value="Back">Back</option>
+                            <option value="Neck">Neck</option>
+                            <option value="Shoulder">Shoulder</option>
+                            <option value="Elbow">Elbow</option>
+                            <option value="Wrist">Wrist</option>
+                            <option value="Hand">Hand</option>
+                            <option value="Hip">Hip</option>
+                            <option value="Knee">Knee</option>
+                            <option value="Ankle">Ankle</option>
+                            <option value="Foot">Foot</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Pain Intensity (NPRS):</label>
+                        <input type="number" class="form-control" id="finalPainIntensity" min="0" max="10" onchange="updateNestedField('finalFindings.complaints.painIntensity', this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label>Other Symptoms:</label>
+                        <input type="text" class="form-control" id="finalOtherSymptoms" onchange="updateNestedField('finalFindings.complaints.otherSymptoms', this.value)">
+                    </div>
+                </div>
+                
+                <h4>II. Objective Findings</h4>
+                <div class="form-group">
+                    <label>Observation:</label>
+                    <textarea class="form-control" id="finalObservation" onchange="updateNestedField('finalFindings.objectiveFindings.observation', this.value)" placeholder="Final clinical observations"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Assessment:</label>
+                    <textarea class="form-control" id="finalAssessment" onchange="updateNestedField('finalFindings.assessment', this.value)" placeholder="Final assessment"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Plan:</label>
+                    <textarea class="form-control" id="finalPlan" onchange="updateNestedField('finalFindings.plan', this.value)" placeholder="Final treatment plan"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 7: Treatment Methods -->
+        <div class="section" id="section7">
+            <h2>Section 7: Treatment Methods</h2>
+            
+            <div class="form-group">
+                <h4>Thermal Therapy</h4>
+                <div class="grid-2">
+                    <label><input type="checkbox" onchange="updateTreatmentMethod('Hot pack', this.checked)"> Hot pack</label>
+                    <label><input type="checkbox" onchange="updateTreatmentMethod('Cold pack', this.checked)"> Cold pack</label>
+                    <label><input type="checkbox" onchange="updateTreatmentMethod('Wax therapy', this.checked)"> Wax therapy</label>
+                    <label><input type="checkbox" onchange="updateTreatmentMethod('Hydrotherapy', this.checked)"> Hydrotherapy</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <h4>Electrical Therapy</h4>
+                <div class="grid-2">
+                    <label><input type="checkbox" onchange="updateTreatmentMethod('Interferential electrical therapy', this.checked)"> Interferential electrical therapy</label>
+                    <label><input type="checkbox" onchange="updateTreatmentMethod('Neuromuscular electrical stimulation', this.checked)"> Neuromuscular electrical stimulation</label>
+                    <label><input type="checkbox" onchange="updateTreatmentMethod('Transcutaneous Electrical Nerve Stimulation (TENS)', this.checked)"> Transcutaneous Electrical Nerve Stimulation (TENS)</label>
+                    <label><input type="checkbox" onchange="updateTreatmentMethod('Ultrasound therapy', this.checked)"> Ultrasound therapy</label>
+                    <label><input type="checkbox" onchange="updateTreatmentMethod('Pulsed electromagnetic field therapy', this.checked)"> Pulsed electromagnetic field therapy</label>
+                    <label><input type="checkbox" onchange="updateTreatmentMethod('Shockwave therapy', this.checked)"> Shockwave therapy</label>
+                    <label><input type="checkbox" onchange="updateTreatmentMethod('Micro-current therapy', this.checked)"> Micro-current therapy</label>
+                    <label><input type="checkbox" onchange="updateTreatmentMethod('Infrared light therapy', this.checked)"> Infrared light therapy</label>
+                    <label><input type="checkbox" onchange="updateTreatmentMethod('Polarized polychromatic light therapy', this.checked)"> Polarized polychromatic light therapy</label>
+                    <label><input type="checkbox" onchange="updateTreatmentMethod('High electromagnetic inductive therapy', this.checked)"> High electromagnetic inductive therapy</label>
+                    <label><input type="checkbox" onchange="updateTreatmentMethod('Pulsed shortwave therapy', this.checked)"> Pulsed shortwave therapy</label>
+                    <label><input type="checkbox" onchange="updateTreatmentMethod('Flowpulse therapy', this.checked)"> Flowpulse therapy</label>
+                    <label><input type="checkbox" onchange="updateTreatmentMethod('Laser therapy', this.checked)"> Laser therapy</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <h4>Manual Therapy</h4>
+                <label><input type="checkbox" onchange="updateTreatmentMethod('Manual therapy', this.checked)"> Manual therapy</label>
+            </div>
+
+            <div class="form-group">
+                <h4>Exercise Therapy</h4>
+                <div class="grid-2">
+                    <label><input type="checkbox" onchange="updateTreatmentMethod('Mobilization exercise', this.checked)"> Mobilization exercise</label>
+                    <label><input type="checkbox" onchange="updateTreatmentMethod('Strengthening exercise', this.checked)"> Strengthening exercise</label>
+                    <label><input type="checkbox" onchange="updateTreatmentMethod('Exercise therapy', this.checked)"> Exercise therapy</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <h4>Others</h4>
+                <div class="grid-2">
+                    <label><input type="checkbox" onchange="updateTreatmentMethod('De-sensitization training', this.checked)"> De-sensitization training</label>
+                    <label><input type="checkbox" onchange="updateTreatmentMethod('Acupuncture', this.checked)"> Acupuncture</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Other Treatment:</label>
+                <textarea class="form-control" id="otherTreatment" onchange="updateField('otherTreatment', this.value)" placeholder="Describe any other treatments not listed above"></textarea>
+            </div>
+        </div>
+
+        <!-- Section 8: Discharge Summary -->
+        <div class="section" id="section8">
+            <h2>Section 8: Discharge Summary</h2>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Discharge Type:</label>
+                    <select class="form-control" id="dischargeType" onchange="updateNestedField('dischargeSummary.componentData.dischargeType', this.value)">
+                        <option value="">Select discharge type</option>
+                        <option value="Discharged">Discharged</option>
+                        <option value="Discharged with static progress">Discharged with static progress</option>
+                        <option value="Still receiving physiotherapy">Still receiving physiotherapy</option>
+                        <option value="Defaulted">Defaulted</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Discharge Date:</label>
+                    <input type="date" class="form-control" id="dischargeDate" onchange="updateNestedField('dischargeSummary.componentData.dischargeDate', this.value)">
+                </div>
+                <div class="form-group">
+                    <label>Final Outcome:</label>
+                    <textarea class="form-control" id="finalOutcome" onchange="updateNestedField('dischargeSummary.componentData.finalOutcome', this.value)" placeholder="Final treatment outcome"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Recommendations:</label>
+                    <textarea class="form-control" id="recommendations" onchange="updateNestedField('dischargeSummary.componentData.recommendations', this.value)" placeholder="Post-discharge recommendations"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 9: Declaration -->
+        <div class="section" id="section9">
+            <h2>Section 9: Declaration</h2>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Consent Date for Declaration:</label>
+                    <input type="date" class="form-control" id="consentDate" onchange="updateField('consentDate', this.value)">
+                </div>
+                <div class="form-group">
+                    <label>Name:</label>
+                    <input type="text" class="form-control" id="declarationName" onchange="updateField('declarationName', this.value)">
+                </div>
+                <div class="form-group">
+                    <label>Title:</label>
+                    <input type="text" class="form-control" id="declarationTitle" onchange="updateField('declarationTitle', this.value)">
+                </div>
+                <div class="form-group">
+                    <label>Education Qualifications:</label>
+                    <textarea class="form-control" id="educationQualifications" onchange="updateField('educationQualifications', this.value)"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Export Section -->
+        <div class="export-section">
+            <h3>Data Export</h3>
+            <p>Generate a data string that can be imported into the full app for identical report generation.</p>
+            <div style="margin: 15px 0;">
+                <button type="button" class="btn btn-success" onclick="generateDataString()">Generate Data String</button>
+                <button type="button" class="btn btn-primary" onclick="fillMockData()">Fill Mock Data</button>
+            </div>
+            <textarea class="export-output" id="exportOutput" readonly placeholder="Click 'Generate Data String' to create exportable data..."></textarea>
+            <div style="margin-top: 10px;">
+                <button type="button" class="btn btn-secondary" onclick="copyDataString()">Copy Data String</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global data structure with nested format for full app compatibility
+        var reportData = {
+            ourRef: '',
+            ourRef2: '',
+            yourRef: '',
+            yourRefDate: '',
+            reportDate: '',
+            recipient: '',
+            patientName: '',
+            patientSex: '',
+            patientAge: '',
+            hkidNo: '',
+            ptOpdNo: '',
+            diagnosis: '',
+            department: '',
+            hospital: '',
+            totalSessions: '',
+            registrationDate: '',
+            startDate: '',
+            endDate: '',
+            caseTherapists: '',
+            reportWrittenBy: '',
+            attendedSessions: '',
+            defaultedSessions: '',
+            initialFindings: {
+                date: '',
+                complaints: {
+                    side: '',
+                    painRegion: '',
+                    painIntensity: '',
+                    otherSymptoms: '',
+                    improvement: ''
+                },
+                objectiveFindings: {
+                    observation: ''
+                },
+                assessment: '',
+                plan: ''
+            },
+            interimFindings: {
+                date: '',
+                complaints: {
+                    side: '',
+                    painRegion: '',
+                    painIntensity: '',
+                    otherSymptoms: '',
+                    improvement: ''
+                },
+                objectiveFindings: {
+                    observation: ''
+                },
+                assessment: '',
+                plan: ''
+            },
+            finalFindings: {
+                date: '',
+                complaints: {
+                    side: '',
+                    painRegion: '',
+                    painIntensity: '',
+                    otherSymptoms: '',
+                    improvement: ''
+                },
+                objectiveFindings: {
+                    observation: ''
+                },
+                assessment: '',
+                plan: ''
+            },
+            treatments: [],
+            otherTreatment: '',
+            dischargeSummary: {
+                componentData: {
+                    dischargeType: '',
+                    dischargeDate: '',
+                    finalOutcome: '',
+                    recommendations: ''
+                }
+            },
+            consentDate: '',
+            declarationName: '',
+            declarationTitle: '',
+            educationQualifications: ''
+        };
+
+        // Update simple field
+        function updateField(fieldName, value) {
+            reportData[fieldName] = value;
+        }
+
+        // Update nested field using dot notation
+        function updateNestedField(fieldPath, value) {
+            var keys = fieldPath.split('.');
+            var obj = reportData;
+            
+            for (var i = 0; i < keys.length - 1; i++) {
+                if (!obj[keys[i]]) {
+                    obj[keys[i]] = {};
+                }
+                obj = obj[keys[i]];
+            }
+            
+            obj[keys[keys.length - 1]] = value;
+        }
+
+        // Update treatment methods
+        function updateTreatmentMethod(treatment, checked) {
+            var treatments = reportData.treatments;
+            var existingIndex = -1;
+            
+            for (var i = 0; i < treatments.length; i++) {
+                if (treatments[i].method === treatment) {
+                    existingIndex = i;
+                    break;
+                }
+            }
+            
+            if (checked && existingIndex === -1) {
+                treatments.push({
+                    method: treatment,
+                    area: ''
+                });
+            } else if (!checked && existingIndex !== -1) {
+                treatments.splice(existingIndex, 1);
+            }
+        }
+
+        // Show section function
+        function showSection(sectionNumber) {
+            var sections = document.getElementsByClassName('section');
+            for (var i = 0; i < sections.length; i++) {
+                sections[i].classList.remove('active');
+            }
+            
+            var tabs = document.getElementsByClassName('nav-tab');
+            for (var i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove('active');
+            }
+            
+            document.getElementById('section' + sectionNumber).classList.add('active');
+            tabs[sectionNumber - 1].classList.add('active');
+        }
+
+        // Show clinical tab function
+        function showClinicalTab(tabName) {
+            var contents = document.getElementsByClassName('clinical-content');
+            for (var i = 0; i < contents.length; i++) {
+                contents[i].classList.remove('active');
+            }
+            
+            var tabs = document.getElementsByClassName('clinical-tab');
+            for (var i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove('active');
+            }
+            
+            document.getElementById(tabName + 'Clinical').classList.add('active');
+            
+            var targetTab = document.querySelector('[onclick="showClinicalTab(\'' + tabName + '\')"]');
+            if (targetTab) {
+                targetTab.classList.add('active');
+            }
+        }
+
+        // Copy from initial findings
+        function copyFromInitial(targetSection) {
+            if (targetSection === 'interim') {
+                reportData.interimFindings = JSON.parse(JSON.stringify(reportData.initialFindings));
+                reportData.interimFindings.date = getCurrentDate();
+                populateInterimFields();
+            } else if (targetSection === 'final') {
+                reportData.finalFindings = JSON.parse(JSON.stringify(reportData.initialFindings));
+                reportData.finalFindings.date = getCurrentDate();
+                populateFinalFields();
+            }
+        }
+
+        // Copy from interim findings
+        function copyFromInterim(targetSection) {
+            if (targetSection === 'final') {
+                reportData.finalFindings = JSON.parse(JSON.stringify(reportData.interimFindings));
+                reportData.finalFindings.date = getCurrentDate();
+                populateFinalFields();
+            }
+        }
+
+        // Get current date
+        function getCurrentDate() {
+            var today = new Date();
+            var year = today.getFullYear();
+            var month = String(today.getMonth() + 1).padStart(2, '0');
+            var day = String(today.getDate()).padStart(2, '0');
+            return year + '-' + month + '-' + day;
+        }
+
+        // Populate interim fields
+        function populateInterimFields() {
+            document.getElementById('interimDate').value = reportData.interimFindings.date || '';
+            document.getElementById('interimComplaintsSide').value = reportData.interimFindings.complaints.side || '';
+            document.getElementById('interimPainRegion').value = reportData.interimFindings.complaints.painRegion || '';
+            document.getElementById('interimPainIntensity').value = reportData.interimFindings.complaints.painIntensity || '';
+            document.getElementById('interimOtherSymptoms').value = reportData.interimFindings.complaints.otherSymptoms || '';
+            document.getElementById('interimObservation').value = reportData.interimFindings.objectiveFindings.observation || '';
+            document.getElementById('interimAssessment').value = reportData.interimFindings.assessment || '';
+            document.getElementById('interimPlan').value = reportData.interimFindings.plan || '';
+        }
+
+        // Populate final fields
+        function populateFinalFields() {
+            document.getElementById('finalDate').value = reportData.finalFindings.date || '';
+            document.getElementById('finalComplaintsSide').value = reportData.finalFindings.complaints.side || '';
+            document.getElementById('finalPainRegion').value = reportData.finalFindings.complaints.painRegion || '';
+            document.getElementById('finalPainIntensity').value = reportData.finalFindings.complaints.painIntensity || '';
+            document.getElementById('finalOtherSymptoms').value = reportData.finalFindings.complaints.otherSymptoms || '';
+            document.getElementById('finalObservation').value = reportData.finalFindings.objectiveFindings.observation || '';
+            document.getElementById('finalAssessment').value = reportData.finalFindings.assessment || '';
+            document.getElementById('finalPlan').value = reportData.finalFindings.plan || '';
+        }
+
+        // Generate data string
+        function generateDataString() {
+            try {
+                var dataString = JSON.stringify(reportData, null, 2);
+                document.getElementById('exportOutput').value = dataString;
+                alert('Data string generated successfully! All 9 sections are importable into the full app.');
+            } catch (error) {
+                alert('Error generating data string: ' + error.message);
+            }
+        }
+
+        // Copy data string
+        function copyDataString() {
+            var output = document.getElementById('exportOutput');
+            if (!output.value) {
+                generateDataString();
+            }
+            
+            output.select();
+            document.execCommand('copy');
+            alert('Data string copied to clipboard!');
+        }
+
+        // Fill mock data
+        function fillMockData() {
+            reportData = {
+                ourRef: 'REF001',
+                ourRef2: 'SUB001',
+                yourRef: 'YOUR123',
+                yourRefDate: '2025-01-01',
+                reportDate: '2025-01-15',
+                recipient: 'Dr. Smith',
+                patientName: 'CHAN, T. M.',
+                patientSex: 'Male',
+                patientAge: '45',
+                hkidNo: 'A123456(7)',
+                ptOpdNo: 'PT001234',
+                diagnosis: 'Lower back pain with muscle spasm',
+                department: 'Orthopedics',
+                hospital: 'Tuen Mun Hospital',
+                totalSessions: '8',
+                registrationDate: '2024-12-01',
+                startDate: '2024-12-15',
+                endDate: '2025-01-15',
+                caseTherapists: 'Jane Smith, PT',
+                reportWrittenBy: 'Jane Smith',
+                attendedSessions: '8',
+                defaultedSessions: '0',
+                initialFindings: {
+                    date: '2024-12-15',
+                    complaints: {
+                        side: 'Bilateral',
+                        painRegion: 'Back',
+                        painIntensity: '8',
+                        otherSymptoms: 'Muscle stiffness, reduced mobility',
+                        improvement: '0 out of 10'
+                    },
+                    objectiveFindings: {
+                        observation: 'Reduced lumbar flexion, visible muscle spasm in lower back, tenderness over L4-L5 region'
+                    },
+                    assessment: 'Mechanical lower back pain with associated muscle spasm',
+                    plan: 'Manual therapy, exercise program, heat therapy'
+                },
+                interimFindings: {
+                    date: '2025-01-01',
+                    complaints: {
+                        side: 'Bilateral',
+                        painRegion: 'Back',
+                        painIntensity: '5',
+                        otherSymptoms: 'Reduced muscle stiffness, improved mobility',
+                        improvement: '5 out of 10'
+                    },
+                    objectiveFindings: {
+                        observation: 'Improved lumbar flexion, less muscle spasm, reduced tenderness'
+                    },
+                    assessment: 'Good progress with current treatment approach',
+                    plan: 'Continue manual therapy and exercise program'
+                },
+                finalFindings: {
+                    date: '2025-01-15',
+                    complaints: {
+                        side: 'Left',
+                        painRegion: 'Back',
+                        painIntensity: '2',
+                        otherSymptoms: 'Minimal stiffness, good mobility',
+                        improvement: '8 out of 10'
+                    },
+                    objectiveFindings: {
+                        observation: 'Normal lumbar range of motion, no muscle spasm, minimal tenderness'
+                    },
+                    assessment: 'Significant improvement achieved, ready for discharge',
+                    plan: 'Home exercise program for maintenance'
+                },
+                treatments: [
+                    { method: 'Manual therapy', area: '' },
+                    { method: 'Exercise therapy', area: '' },
+                    { method: 'Hot pack', area: '' },
+                    { method: 'Ultrasound therapy', area: '' }
+                ],
+                otherTreatment: 'Patient education on proper body mechanics and ergonomics',
+                dischargeSummary: {
+                    componentData: {
+                        dischargeType: 'Discharged',
+                        dischargeDate: '2025-01-15',
+                        finalOutcome: 'Patient achieved significant pain reduction from 8/10 to 2/10. Functional improvement with return to normal daily activities.',
+                        recommendations: 'Continue home exercise program 3x per week. Return to physiotherapy if symptoms recur. Maintain proper posture and body mechanics.'
+                    }
+                },
+                consentDate: '2025-01-15',
+                declarationName: 'Jane Smith',
+                declarationTitle: 'Senior Physiotherapist',
+                educationQualifications: 'Bachelor of Physiotherapy, Master of Sports Physiotherapy'
+            };
+            
+            updateAllFormFields();
+            alert('Mock data filled successfully!');
+        }
+
+        // Update all form fields
+        function updateAllFormFields() {
+            document.getElementById('ourRef').value = reportData.ourRef || '';
+            document.getElementById('ourRef2').value = reportData.ourRef2 || '';
+            document.getElementById('yourRef').value = reportData.yourRef || '';
+            document.getElementById('yourRefDate').value = reportData.yourRefDate || '';
+            document.getElementById('reportDate').value = reportData.reportDate || '';
+            document.getElementById('recipient').value = reportData.recipient || '';
+            document.getElementById('patientName').value = reportData.patientName || '';
+            document.getElementById('patientSex').value = reportData.patientSex || '';
+            document.getElementById('patientAge').value = reportData.patientAge || '';
+            document.getElementById('hkidNo').value = reportData.hkidNo || '';
+            document.getElementById('ptOpdNo').value = reportData.ptOpdNo || '';
+            document.getElementById('diagnosis').value = reportData.diagnosis || '';
+            document.getElementById('department').value = reportData.department || '';
+            document.getElementById('hospital').value = reportData.hospital || '';
+            document.getElementById('totalSessions').value = reportData.totalSessions || '';
+            document.getElementById('registrationDate').value = reportData.registrationDate || '';
+            document.getElementById('startDate').value = reportData.startDate || '';
+            document.getElementById('endDate').value = reportData.endDate || '';
+            document.getElementById('caseTherapists').value = reportData.caseTherapists || '';
+            document.getElementById('reportWrittenBy').value = reportData.reportWrittenBy || '';
+            document.getElementById('attendedSessions').value = reportData.attendedSessions || '';
+            document.getElementById('defaultedSessions').value = reportData.defaultedSessions || '';
+            
+            document.getElementById('initialDate').value = reportData.initialFindings.date || '';
+            document.getElementById('initialComplaintsSide').value = reportData.initialFindings.complaints.side || '';
+            document.getElementById('initialPainRegion').value = reportData.initialFindings.complaints.painRegion || '';
+            document.getElementById('initialPainIntensity').value = reportData.initialFindings.complaints.painIntensity || '';
+            document.getElementById('initialOtherSymptoms').value = reportData.initialFindings.complaints.otherSymptoms || '';
+            document.getElementById('initialObservation').value = reportData.initialFindings.objectiveFindings.observation || '';
+            document.getElementById('initialAssessment').value = reportData.initialFindings.assessment || '';
+            document.getElementById('initialPlan').value = reportData.initialFindings.plan || '';
+            
+            populateInterimFields();
+            populateFinalFields();
+            
+            var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            for (var i = 0; i < checkboxes.length; i++) {
+                checkboxes[i].checked = false;
+            }
+            
+            for (var j = 0; j < reportData.treatments.length; j++) {
+                var treatment = reportData.treatments[j].method;
+                var checkbox = document.querySelector('input[onchange*="' + treatment + '"]');
+                if (checkbox) {
+                    checkbox.checked = true;
+                }
+            }
+            
+            document.getElementById('otherTreatment').value = reportData.otherTreatment || '';
+            document.getElementById('dischargeType').value = reportData.dischargeSummary.componentData.dischargeType || '';
+            document.getElementById('dischargeDate').value = reportData.dischargeSummary.componentData.dischargeDate || '';
+            document.getElementById('finalOutcome').value = reportData.dischargeSummary.componentData.finalOutcome || '';
+            document.getElementById('recommendations').value = reportData.dischargeSummary.componentData.recommendations || '';
+            document.getElementById('consentDate').value = reportData.consentDate || '';
+            document.getElementById('declarationName').value = reportData.declarationName || '';
+            document.getElementById('declarationTitle').value = reportData.declarationTitle || '';
+            document.getElementById('educationQualifications').value = reportData.educationQualifications || '';
+        }
+
+        console.log('Lite App v3.4 Fixed initialized successfully');
+    </script>
+</body>
+</html>
