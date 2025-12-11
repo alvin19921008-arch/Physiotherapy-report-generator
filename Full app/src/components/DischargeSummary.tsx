@@ -288,48 +288,25 @@ const DischargeSummaryComponent: React.FC<DischargeSummaryProps> = ({
     }
 
     // AROM comparison - handle hand/foot regions separately
-    console.log('DEBUG: Initial location:', initialFindings.complaints.location);
-    console.log('DEBUG: Final location:', finalFindings.complaints.location);
-    
     if (initialFindings.complaints.location === 'hand' || initialFindings.complaints.location === 'foot') {
       // Handle ONLY fingers/toes AROM comparison (small joint ranges) for hand/foot regions
       const side = initialFindings.complaints.side ? `${initialFindings.complaints.side} ` : '';
-      
-      console.log('DEBUG: Hand/Foot region detected - checking small joint ranges only');
       
       // Handle fingers/toes AROM comparison (small joint ranges)
       const initialFingersToesData = initialFindings.objectiveFindings?.fingersToesData || [];
       const finalFingersToesData = finalFindings.objectiveFindings?.fingersToesData || [];
       
-      console.log('DEBUG: Initial fingersToesData:', JSON.stringify(initialFingersToesData, null, 2));
-      console.log('DEBUG: Final fingersToesData:', JSON.stringify(finalFingersToesData, null, 2));
-      console.log('DEBUG: Initial fingersToesData length:', initialFingersToesData.length);
-      console.log('DEBUG: Final fingersToesData length:', finalFingersToesData.length);
-      
-      // Additional debugging for manual input
-      console.log('DEBUG: Initial objectiveFindings:', JSON.stringify(initialFindings.objectiveFindings, null, 2));
-      console.log('DEBUG: Final objectiveFindings:', JSON.stringify(finalFindings.objectiveFindings, null, 2));
-      
-      console.log('DEBUG: About to start forEach loop for fingersToesData comparison');
-      
       initialFingersToesData.forEach((initialFingerToe, fingerIndex) => {
         const finalFingerToe = finalFingersToesData[fingerIndex];
-        console.log(`DEBUG: Comparing finger ${fingerIndex}:`, initialFingerToe, 'vs', finalFingerToe);
-        console.log(`DEBUG: Name comparison - Initial: '${initialFingerToe?.name}', Final: '${finalFingerToe?.name}'`);
         // Use case-insensitive comparison for finger/toe names
         if (initialFingerToe && finalFingerToe && 
             initialFingerToe.name && finalFingerToe.name &&
             initialFingerToe.name.toLowerCase().trim() === finalFingerToe.name.toLowerCase().trim()) {
-          console.log(`DEBUG: Names match, checking joints for ${initialFingerToe.name}`);
           const jointImprovements = [];
           
           initialFingerToe.joints.forEach((initialJoint, jointIndex) => {
             const finalJoint = finalFingerToe.joints.find(fj => fj.jointType === initialJoint.jointType);
-            console.log(`DEBUG: Comparing joint:`, initialJoint, 'vs', finalJoint);
-            console.log(`DEBUG: Joint comparison - Initial range: '${initialJoint?.range}', Final range: '${finalJoint?.range}'`);
-            console.log(`DEBUG: Range different?`, initialJoint?.range !== finalJoint?.range);
             if (initialJoint && finalJoint && initialJoint.range && finalJoint.range && initialJoint.range !== finalJoint.range) {
-              console.log(`DEBUG: Joint improvement detected for ${initialJoint.jointType}`);
               const jointOptions = {
                 'cmcj': 'Carpometacarpal joint (CMCJ)',
                 'mcpj': 'Metacarpophalengeal joint (MCPJ)',
@@ -365,22 +342,15 @@ const DischargeSummaryComponent: React.FC<DischargeSummaryProps> = ({
               category: 'AROM',
               text: `The AROM of ${pronouns.his.toLowerCase()} ${side}${initialFingerToe.name.toLowerCase()} improved, notably in ${improvementText}.`
             };
-            console.log('DEBUG: Adding AROM comparison:', comparisonItem);
             comparisons.push(comparisonItem);
           }
         }
       });
       
-      console.log('DEBUG: Finished processing all fingersToesData');
-      console.log('DEBUG: Total comparisons added so far:', comparisons.length);
-      
       // Handle small joint ROM "not tested" to "tested" comparison for hand/foot regions
       if (initialFindings.objectiveFindings.aromNotTested && !finalFindings.objectiveFindings.aromNotTested) {
         const finalFingersToesData = finalFindings.objectiveFindings?.fingersToesData || [];
         const side = initialFindings.complaints.side ? `${initialFindings.complaints.side.toLowerCase()} ` : '';
-        
-        console.log('DEBUG: Processing not tested to tested for small joints');
-        console.log('DEBUG: Final fingersToesData for not tested case:', JSON.stringify(finalFingersToesData, null, 2));
         
         finalFingersToesData.forEach((finalFingerToe) => {
           if (finalFingerToe.name && finalFingerToe.joints.some(j => j.range)) {
@@ -417,7 +387,6 @@ const DischargeSummaryComponent: React.FC<DischargeSummaryProps> = ({
                 category: 'AROM',
                 text: `The active range of movement (AROM) of ${pronouns.his.toLowerCase()} ${side}${finalFingerToe.name.toLowerCase()} improved, notably in ${improvementText}.`
               };
-              console.log('DEBUG: Adding not tested to tested AROM comparison:', comparisonItem);
               comparisons.push(comparisonItem);
             }
           }
@@ -479,7 +448,6 @@ const DischargeSummaryComponent: React.FC<DischargeSummaryProps> = ({
         const region = getRegionText(initialFindings);
         const aromImprovements = [];
         
-        console.log('DEBUG: Processing ankle not tested to tested');
         
         // Regular AROM movements for ankle
         finalFindings.objectiveFindings.aromMovements.forEach((finalMovement) => {
@@ -838,12 +806,10 @@ const DischargeSummaryComponent: React.FC<DischargeSummaryProps> = ({
       });
     }
 
-    console.log('DEBUG: Final comparisons array:', comparisons);
     return comparisons;
   };
 
   const comparisonData = generateComparisonData();
-  console.log('DEBUG: Generated comparison data:', comparisonData);
 
   // Define the predefined order for comparison items
   const getPredefinedOrder = (items: typeof comparisonData) => {

@@ -66,7 +66,4 @@ if (!validation.isValid) {
   console.error('Version validation failed:', validation.errors);
 }
 
-// Log version info in development
-if (import.meta.env.MODE === 'development') {
-  console.log('App Version Info:', getVersionInfo());
-}
+// Version info available via getVersionInfo() function if needed

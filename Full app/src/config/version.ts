@@ -3,7 +3,7 @@ export const APP_VERSION = {
   major: 1,
   minor: 7,
   patch: 0,
-  build: 1765461986082, // Unique build identifier
+  build: 1765462443909, // Unique build identifier
   
   // Full version string
   get full() {
@@ -34,7 +34,7 @@ export const VERSION_HISTORY = [
 
 // Build information
 export const BUILD_INFO = {
-  timestamp: '2025-12-11T14:06:26.082Z',
+  timestamp: '2025-12-11T14:14:03.909Z',
   environment: import.meta.env.MODE || 'development',
   commit: import.meta.env.VITE_GIT_COMMIT || 'unknown'
 };

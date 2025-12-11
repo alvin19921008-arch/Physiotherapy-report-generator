@@ -1888,7 +1888,6 @@ const ClinicalFindingsComponent: React.FC<ClinicalFindingsProps> = ({
                   <Select 
                     value={findings.objectiveFindings.sensationStatus || 'intact'} 
                     onValueChange={(value) => {
-                      console.log('Changing sensationStatus to:', value);
                       handleObjectiveFindingChange('sensationStatus', value);
                     }}
                   >
@@ -1904,11 +1903,7 @@ const ClinicalFindingsComponent: React.FC<ClinicalFindingsProps> = ({
                 </div>
                 
                 {/* Show fields for Reduced sensation only */}
-                {(() => {
-                  console.log('Current sensationStatus:', findings.objectiveFindings.sensationStatus);
-                  console.log('Should show reduced fields:', findings.objectiveFindings.sensationStatus === 'reduced');
-                  return findings.objectiveFindings.sensationStatus === 'reduced';
-                })() && (
+                {findings.objectiveFindings.sensationStatus === 'reduced' && (
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="sensationReduction">Reduction Percentage</Label>
@@ -1937,10 +1932,7 @@ const ClinicalFindingsComponent: React.FC<ClinicalFindingsProps> = ({
                 )}
                 
                 {/* Show field for Hypersensitivity only */}
-                {(() => {
-                  console.log('Should show hypersensitive fields:', findings.objectiveFindings.sensationStatus === 'hypersensitive');
-                  return findings.objectiveFindings.sensationStatus === 'hypersensitive';
-                })() && (
+                {findings.objectiveFindings.sensationStatus === 'hypersensitive' && (
                   <div className="space-y-2">
                     <Label htmlFor="areaHypersensitive">Over Which Area</Label>
                     <Input
@@ -2551,9 +2543,20 @@ const ClinicalFindingsComponent: React.FC<ClinicalFindingsProps> = ({
                     
                     // Only show formatted text if ONLY hand grip data exists (no pinch/lateral pinch)
                     if (hasHandGrip && !hasPinchData) {
-                      const leftGrip = grip?.leftHandGrip || '[X]';
-                      const rightGrip = grip?.rightHandGrip || '[Y]';
-                      elements.push(<p key={`handgrip-${counter}`}>{counter++}. Hand grip strength of {pronouns.his.toLowerCase()} right hand and left hand was {rightGrip} kgf and {leftGrip} kgf respectively.</p>);
+                      const leftGrip = grip?.leftHandGrip;
+                      const rightGrip = grip?.rightHandGrip;
+                      
+                      // Check if only one side has data
+                      if (leftGrip && !rightGrip) {
+                        // Only left hand has data
+                        elements.push(<p key={`handgrip-${counter}`}>{counter++}. Hand grip strength of {pronouns.his.toLowerCase()} left hand was {leftGrip} kgf.</p>);
+                      } else if (rightGrip && !leftGrip) {
+                        // Only right hand has data
+                        elements.push(<p key={`handgrip-${counter}`}>{counter++}. Hand grip strength of {pronouns.his.toLowerCase()} right hand was {rightGrip} kgf.</p>);
+                      } else if (leftGrip && rightGrip) {
+                        // Both sides have data
+                        elements.push(<p key={`handgrip-${counter}`}>{counter++}. Hand grip strength of {pronouns.his.toLowerCase()} right hand and left hand was {rightGrip} kgf and {leftGrip} kgf respectively.</p>);
+                      }
                     }
                   }
                 }
@@ -2561,9 +2564,20 @@ const ClinicalFindingsComponent: React.FC<ClinicalFindingsProps> = ({
                 // Hand grip strength for wrist (separate from muscle power table)
                 if (findings.complaints.location === 'wrist' && 
                     (findings.objectiveFindings.handGripStrength?.leftHandGrip || findings.objectiveFindings.handGripStrength?.rightHandGrip)) {
-                  const leftGrip = findings.objectiveFindings.handGripStrength?.leftHandGrip || '[X]';
-                  const rightGrip = findings.objectiveFindings.handGripStrength?.rightHandGrip || '[Y]';
-                  elements.push(<p key={`handgrip-wrist-${counter}`}>{counter++}. Hand grip strength of {pronouns.his.toLowerCase()} right hand and left hand was {rightGrip} kg and {leftGrip} kg respectively.</p>);
+                  const leftGrip = findings.objectiveFindings.handGripStrength?.leftHandGrip;
+                  const rightGrip = findings.objectiveFindings.handGripStrength?.rightHandGrip;
+                  
+                  // Check if only one side has data
+                  if (leftGrip && !rightGrip) {
+                    // Only left hand has data
+                    elements.push(<p key={`handgrip-wrist-${counter}`}>{counter++}. Hand grip strength of {pronouns.his.toLowerCase()} left hand was {leftGrip} kgf.</p>);
+                  } else if (rightGrip && !leftGrip) {
+                    // Only right hand has data
+                    elements.push(<p key={`handgrip-wrist-${counter}`}>{counter++}. Hand grip strength of {pronouns.his.toLowerCase()} right hand was {rightGrip} kgf.</p>);
+                  } else if (leftGrip && rightGrip) {
+                    // Both sides have data
+                    elements.push(<p key={`handgrip-wrist-${counter}`}>{counter++}. Hand grip strength of {pronouns.his.toLowerCase()} right hand and left hand was {rightGrip} kg and {leftGrip} kg respectively.</p>);
+                  }
                 }
                 
                 // Splint/Brace/Cast finding

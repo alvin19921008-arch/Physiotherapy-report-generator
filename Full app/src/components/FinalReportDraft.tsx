@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Copy, FileText, Download, ZoomIn, ZoomOut } from 'lucide-react';
@@ -37,6 +37,58 @@ const FinalReportDraft: React.FC<FinalReportDraftProps> = ({
   const [zoomLevel, setZoomLevel] = useState(100);
   const contentRef = useRef<HTMLDivElement>(null);
 
+  // Memoize helper functions
+  const formatDate = useCallback((dateString: string) => {
+    if (!dateString) return 'N/A';
+    try {
+      const date = new Date(dateString);
+      const day = date.getDate();
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const month = months[date.getMonth()];
+      const year = date.getFullYear();
+      return `${day} ${month} ${year}`;
+    } catch (error) {
+      return 'N/A';
+    }
+  }, []);
+
+  const getPronouns = useCallback((sex: string) => {
+    if (sex === 'Male') {
+      return { he: 'He', his: 'His', him: 'him', title: 'Mr.' };
+    } else if (sex === 'Female') {
+      return { he: 'She', his: 'Her', him: 'her', title: 'Ms.' };
+    } else {
+      return { he: 'He/She', his: 'His/Her', him: 'him/her', title: 'Mr./Ms.' };
+    }
+  }, []);
+
+  const getRegionText = useCallback((findings: any) => {
+    const side = findings.complaints.side;
+    const location = findings.complaints.location;
+    
+    if (location === 'back' || location === 'neck') {
+      return location;
+    }
+    
+    if (side && location) {
+      return side === 'bilateral' ? `bilateral ${location}` : `${side} ${location}`;
+    }
+    
+    return location || 'affected area';
+  }, []);
+
+  const getQuestionnaireScoring = useCallback((questionnaireName: string, score: string) => {
+    const scoringRules: { [key: string]: string } = {
+      'QuickDASH': `Quick Disabilities of the Arm, Shoulder, and Hand questionnaire (QuickDASH) was charted as ${score} out of 100.`,
+      'Lower Extremity Functional Scale': `Lower Extremity Functional Scale (LEFS) was charted as ${score} out of 80.`,
+      'Roland-Morris Disability Questionnaire': `Roland-Morris Disability Questionnaire (RMDQ) was charted as ${score} out of 24.`,
+      'Northwick Park Neck Pain Questionnaire': `Northwick Park Neck Pain Questionnaire (NPQ) was charted as ${score} out of 100%.`
+    };
+    return scoringRules[questionnaireName] || `${questionnaireName} was charted as ${score}.`;
+  }, []);
+
+  // Memoize pronouns object
+  const pronouns = useMemo(() => getPronouns(reportData?.patientSex || ''), [reportData?.patientSex, getPronouns]);
 
   // Helper function to check if interim findings has meaningful data
   const hasInterimData = (findings: any) => {
@@ -63,75 +115,12 @@ const FinalReportDraft: React.FC<FinalReportDraftProps> = ({
       (findings.objectiveFindings.wbStatus && findings.objectiveFindings.wbStatus.trim() !== '')
     );
     
-    console.log('DEBUG hasInterimData:', {
-      findings: !!findings,
-      hasComplaints,
-      hasObjective,
-      result: hasComplaints || hasObjective
-    });
-    
     return hasComplaints || hasObjective;
   };
 
-  const formatDate = (dateString: string) => {
-    if (!dateString) return 'N/A';
-    try {
-      const date = new Date(dateString);
-      const day = date.getDate(); // Remove padStart to avoid leading zero
-      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      const month = months[date.getMonth()];
-      const year = date.getFullYear();
-      return `${day} ${month} ${year}`;
-    } catch (error) {
-      return 'N/A';
-    }
-  };
 
-  const getPronouns = (sex: string) => {
-    if (sex === 'Male') {
-      return { he: 'He', his: 'His', him: 'him', title: 'Mr.' };
-    } else if (sex === 'Female') {
-      return { he: 'She', his: 'Her', him: 'her', title: 'Ms.' };
-    } else {
-      return { he: 'He/She', his: 'His/Her', him: 'him/her', title: 'Mr./Ms.' };
-    }
-  };
-
-  // Helper function to get region text exactly like in ClinicalFindings
-  const getRegionText = (findings: any) => {
-    const side = findings.complaints.side;
-    const location = findings.complaints.location;
-    
-    if (location === 'back' || location === 'neck') {
-      return location;
-    }
-    
-    if (side && location) {
-      return side === 'bilateral' ? `bilateral ${location}` : `${side} ${location}`;
-    }
-    
-    return location || 'affected area';
-  };
-
-  const getQuestionnaireScoring = (questionnaireName: string, score: string) => {
-    const scoringRules: { [key: string]: string } = {
-      'QuickDASH': `Quick Disabilities of the Arm, Shoulder, and Hand questionnaire (QuickDASH) was charted as ${score} out of 100.`,
-      'Lower Extremity Functional Scale': `Lower Extremity Functional Scale (LEFS) was charted as ${score} out of 80.`,
-      'Roland-Morris Disability Questionnaire': `Roland-Morris Disability Questionnaire (RMDQ) was charted as ${score} out of 24.`,
-      'Northwick Park Neck Pain Questionnaire': `Northwick Park Neck Pain Questionnaire (NPQ) was charted as ${score} out of 100%.`
-    };
-    return scoringRules[questionnaireName] || `${questionnaireName} was charted as ${score}.`;
-  };
-
-  const generatePatientComplaints = (findings: any, pronouns: any) => {
-    console.log('generatePatientComplaints called with:', {
-      findings: findings,
-      complaints: findings?.complaints,
-      hasComplaints: !!findings?.complaints
-    });
-    
+  const generatePatientComplaints = useCallback((findings: any, pronouns: any) => {
     if (!findings?.complaints) {
-      console.log('No complaints found, returning default message');
       return '<div style="font-family: \'Times New Roman\', serif; font-size: 10pt; line-height: 1.0; margin-bottom: 12pt;">No complaints recorded.</div>';
     }
     
@@ -208,9 +197,9 @@ const FinalReportDraft: React.FC<FinalReportDraftProps> = ({
     }
     
     return sentences.map(sentence => `<div style="font-family: 'Times New Roman', serif; font-size: 10pt; line-height: 1.0; margin-bottom: 12pt;">${sentence}</div>`).join('') || '<div style="font-family: \'Times New Roman\', serif; font-size: 10pt; line-height: 1.0; margin-bottom: 12pt;">No specific complaints recorded.</div>';
-  };
+  }, [getRegionText]);
 
-  const generateObjectiveFindings = (findings: any, pronouns: any) => {
+  const generateObjectiveFindings = useCallback((findings: any, pronouns: any) => {
     if (!findings?.objectiveFindings) return '<div style="font-family: \'Times New Roman\', serif; font-size: 10pt; line-height: 1.0; margin-bottom: 12pt;">No objective findings recorded.</div>';
     
     let content = '';
@@ -348,9 +337,20 @@ const FinalReportDraft: React.FC<FinalReportDraftProps> = ({
           
           // If only hand grip data (no pinch/lateral pinch), use formatted text instead of table
           if (hasHandGrip && !hasPinchData) {
-            const leftGrip = grip.leftHandGrip || '[X]';
-            const rightGrip = grip.rightHandGrip || '[Y]';
-            content += `<div style="font-family: 'Times New Roman', serif; font-size: 10pt; line-height: 1.0; margin-bottom: 12pt;">${counter++}. Hand grip strength of ${pronouns.his.toLowerCase()} right hand and left hand was ${rightGrip} kgf and ${leftGrip} kgf respectively.</div>`;
+            const leftGrip = grip.leftHandGrip;
+            const rightGrip = grip.rightHandGrip;
+            
+            // Check if only one side has data
+            if (leftGrip && !rightGrip) {
+              // Only left hand has data
+              content += `<div style="font-family: 'Times New Roman', serif; font-size: 10pt; line-height: 1.0; margin-bottom: 12pt;">${counter++}. Hand grip strength of ${pronouns.his.toLowerCase()} left hand was ${leftGrip} kgf.</div>`;
+            } else if (rightGrip && !leftGrip) {
+              // Only right hand has data
+              content += `<div style="font-family: 'Times New Roman', serif; font-size: 10pt; line-height: 1.0; margin-bottom: 12pt;">${counter++}. Hand grip strength of ${pronouns.his.toLowerCase()} right hand was ${rightGrip} kgf.</div>`;
+            } else if (leftGrip && rightGrip) {
+              // Both sides have data
+              content += `<div style="font-family: 'Times New Roman', serif; font-size: 10pt; line-height: 1.0; margin-bottom: 12pt;">${counter++}. Hand grip strength of ${pronouns.his.toLowerCase()} right hand and left hand was ${rightGrip} kgf and ${leftGrip} kgf respectively.</div>`;
+            }
           } else if (hasHandGrip || hasPinchData) {
             // Use table format when pinch/lateral pinch data exists
             const sideText = findings.complaints.side === 'bilateral' ? 'bilateral' : findings.complaints.side || '[side]';
@@ -407,9 +407,20 @@ const FinalReportDraft: React.FC<FinalReportDraftProps> = ({
         // Add hand grip strength text separately (not in table)
         if (findings.objectiveFindings.handGripStrength && 
             (findings.objectiveFindings.handGripStrength.leftHandGrip || findings.objectiveFindings.handGripStrength.rightHandGrip)) {
-          const leftGrip = findings.objectiveFindings.handGripStrength.leftHandGrip || '[X]';
-          const rightGrip = findings.objectiveFindings.handGripStrength.rightHandGrip || '[Y]';
-          content += `<div style="font-family: 'Times New Roman', serif; font-size: 10pt; line-height: 1.0; margin-bottom: 12pt;">${counter++}. Hand grip strength of ${pronouns.his.toLowerCase()} right hand and left hand was ${rightGrip} kg and ${leftGrip} kg respectively.</div>`;
+          const leftGrip = findings.objectiveFindings.handGripStrength.leftHandGrip;
+          const rightGrip = findings.objectiveFindings.handGripStrength.rightHandGrip;
+          
+          // Check if only one side has data
+          if (leftGrip && !rightGrip) {
+            // Only left hand has data
+            content += `<div style="font-family: 'Times New Roman', serif; font-size: 10pt; line-height: 1.0; margin-bottom: 12pt;">${counter++}. Hand grip strength of ${pronouns.his.toLowerCase()} left hand was ${leftGrip} kgf.</div>`;
+          } else if (rightGrip && !leftGrip) {
+            // Only right hand has data
+            content += `<div style="font-family: 'Times New Roman', serif; font-size: 10pt; line-height: 1.0; margin-bottom: 12pt;">${counter++}. Hand grip strength of ${pronouns.his.toLowerCase()} right hand was ${rightGrip} kgf.</div>`;
+          } else if (leftGrip && rightGrip) {
+            // Both sides have data
+            content += `<div style="font-family: 'Times New Roman', serif; font-size: 10pt; line-height: 1.0; margin-bottom: 12pt;">${counter++}. Hand grip strength of ${pronouns.his.toLowerCase()} right hand and left hand was ${rightGrip} kg and ${leftGrip} kg respectively.</div>`;
+          }
         }
       } else {
         // Regular muscle power or myotome
@@ -597,25 +608,18 @@ const FinalReportDraft: React.FC<FinalReportDraftProps> = ({
 
 
     return content || '<div style="font-family: \'Times New Roman\', serif; font-size: 10pt; line-height: 1.0; margin-bottom: 12pt;">No objective findings recorded.</div>';
-  };
+  }, [getQuestionnaireScoring]);
 
-  const generateSimpleReport = () => {
-    try {
-      console.log('Generating report with data:', {
-        reportData: reportData ? 'present' : 'missing',
-        initialFindings: initialFindings ? 'present' : 'missing',
-        finalFindings: finalFindings ? 'present' : 'missing',
-        dischargeSummary: dischargeSummary ? dischargeSummary.length : 'missing',
-        treatments: reportData?.treatments ? reportData.treatments.length : 'missing'
-      });
-      
-      const patientName = reportData?.patientName || 'N/A';
-      const patientSex = reportData?.patientSex || 'N/A';
-      const patientAge = reportData?.patientAge || 'N/A';
-      const hkidNo = reportData?.hkidNo || 'N/A';
-      const physiotherapyOpdNo = reportData?.physiotherapyOpdNo || 'N/A';
-      const diagnosis = reportData?.diagnosis || 'N/A';
-      const referralSource = reportData?.referralSource || 'Department of Orthopedics and Traumatology, Tuen Mun Hospital';
+  const generateSimpleReport = useMemo(() => {
+    return () => {
+      try {
+        const patientName = reportData?.patientName || 'N/A';
+        const patientSex = reportData?.patientSex || 'N/A';
+        const patientAge = reportData?.patientAge || 'N/A';
+        const hkidNo = reportData?.hkidNo || 'N/A';
+        const physiotherapyOpdNo = reportData?.physiotherapyOpdNo || 'N/A';
+        const diagnosis = reportData?.diagnosis || 'N/A';
+        const referralSource = reportData?.referralSource || 'Department of Orthopedics and Traumatology, Tuen Mun Hospital';
       
       return `
         <div style="position: relative; font-family: 'Times New Roman', serif; font-size: 10pt; line-height: 1.0; background: white; width: 21cm; min-height: 29.7cm; margin: 0 auto; box-sizing: border-box; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
@@ -735,12 +739,12 @@ const FinalReportDraft: React.FC<FinalReportDraftProps> = ({
           <div style="margin-bottom: 1em;">
             <h3 style="font-family: 'Times New Roman', serif; font-size: 10pt; font-weight: bold; font-style: italic; margin: 0.5em 0 0.25em 0; line-height: 1.0; text-decoration: none;">I. Patient's Complaints</h3>
             <div style="font-family: 'Times New Roman', serif; font-size: 10pt; line-height: 1.0; margin-left: 0.4cm; text-indent: -0.3cm; padding-left: 0.3cm;">
-              ${generatePatientComplaints(initialFindings, getPronouns(patientSex))}
+              ${generatePatientComplaints(initialFindings, pronouns)}
             </div>
             
             <h3 style="font-family: 'Times New Roman', serif; font-size: 10pt; font-weight: bold; font-style: italic; margin: 0.5em 0 0.25em 0; line-height: 1.0; text-decoration: none;">II. Objective Findings</h3>
             <div style="font-family: 'Times New Roman', serif; font-size: 10pt; line-height: 1.0; margin-left: 0.4cm; text-indent: -0.3cm; padding-left: 0.3cm;">
-              ${generateObjectiveFindings(initialFindings, getPronouns(patientSex))}
+              ${generateObjectiveFindings(initialFindings, pronouns)}
             </div>
           </div>
           ` : '<div style="font-family: \'Times New Roman\', serif; font-size: 10pt; line-height: 1.0; margin-bottom: 1em;">No initial clinical findings data available.</div>'}
@@ -750,12 +754,12 @@ const FinalReportDraft: React.FC<FinalReportDraftProps> = ({
           <div style="margin-bottom: 1em;">
             <h3 style="font-family: 'Times New Roman', serif; font-size: 10pt; font-weight: bold; font-style: italic; margin: 0.5em 0 0.25em 0; line-height: 1.0; text-decoration: none;">I. Patient's Complaints</h3>
             <div style="font-family: 'Times New Roman', serif; font-size: 10pt; line-height: 1.0; margin-left: 0.4cm; text-indent: -0.3cm; padding-left: 0.3cm;">
-              ${generatePatientComplaints(interimFindings, getPronouns(patientSex))}
+              ${generatePatientComplaints(interimFindings, pronouns)}
             </div>
             
             <h3 style="font-family: 'Times New Roman', serif; font-size: 10pt; font-weight: bold; font-style: italic; margin: 0.5em 0 0.25em 0; line-height: 1.0; text-decoration: none;">II. Objective Findings</h3>
             <div style="font-family: 'Times New Roman', serif; font-size: 10pt; line-height: 1.0; margin-left: 0.4cm; text-indent: -0.3cm; padding-left: 0.3cm;">
-              ${generateObjectiveFindings(interimFindings, getPronouns(patientSex))}
+              ${generateObjectiveFindings(interimFindings, pronouns)}
             </div>
           </div>
           ` : ''}
@@ -765,12 +769,12 @@ const FinalReportDraft: React.FC<FinalReportDraftProps> = ({
           <div style="margin-bottom: 1em;">
             <h3 style="font-family: 'Times New Roman', serif; font-size: 10pt; font-weight: bold; font-style: italic; margin: 0.5em 0 0.25em 0; line-height: 1.0; text-decoration: none;">I. Patient's Complaints</h3>
             <div style="font-family: 'Times New Roman', serif; font-size: 10pt; line-height: 1.0; margin-left: 0.4cm; text-indent: -0.3cm; padding-left: 0.3cm;">
-              ${generatePatientComplaints(finalFindings, getPronouns(patientSex))}
+              ${generatePatientComplaints(finalFindings, pronouns)}
             </div>
             
             <h3 style="font-family: 'Times New Roman', serif; font-size: 10pt; font-weight: bold; font-style: italic; margin: 0.5em 0 0.25em 0; line-height: 1.0; text-decoration: none;">II. Objective Findings</h3>
             <div style="font-family: 'Times New Roman', serif; font-size: 10pt; line-height: 1.0; margin-left: 0.4cm; text-indent: -0.3cm; padding-left: 0.3cm;">
-              ${generateObjectiveFindings(finalFindings, getPronouns(patientSex))}
+              ${generateObjectiveFindings(finalFindings, pronouns)}
             </div>
           </div>
           ` : '<div style="font-family: \'Times New Roman\', serif; font-size: 10pt; line-height: 1.0; margin-bottom: 1em;">No final clinical findings data available.</div>'}
@@ -848,27 +852,27 @@ ${dischargeSummary && dischargeSummary.length > 0
           </div>
         </div>
       `;
-    } catch (error) {
-      console.error('Error generating report:', error);
-      return `
-        <div style="font-family: 'Times New Roman', serif; padding: 20px; text-align: center;">
-          <h2>Final Report Draft</h2>
-          <p>This is a simplified version of the final medical report.</p>
-          <p>The report combines data from all sections (1-9) in the standard medical format.</p>
-          <p style="color: #666; font-size: 12px;">Note: Detailed clinical findings formatting is being developed.</p>
-        </div>
-      `;
-    }
-  };
+      } catch (error) {
+        return `
+          <div style="font-family: 'Times New Roman', serif; padding: 20px; text-align: center;">
+            <h2>Final Report Draft</h2>
+            <p>This is a simplified version of the final medical report.</p>
+            <p>The report combines data from all sections (1-9) in the standard medical format.</p>
+            <p style="color: #666; font-size: 12px;">Note: Detailed clinical findings formatting is being developed.</p>
+          </div>
+        `;
+      }
+    };
+  }, [reportData, initialFindings, interimFindings, finalFindings, dischargeSummary, dischargeSummaryData, formatDate, pronouns, generatePatientComplaints, generateObjectiveFindings, hasInterimData]);
 
+  // Consolidated effect for content generation
   useEffect(() => {
-    if (!isEditing && !hasUserEdited && contentRef.current) {
+    if (contentRef.current && !hasUserEdited && !isEditing) {
       try {
         const report = generateSimpleReport();
         setEditableContent(report);
         contentRef.current.innerHTML = report;
       } catch (error) {
-        console.error('Error in useEffect:', error);
         const errorContent = `
           <div style="font-family: 'Times New Roman', serif; padding: 20px; text-align: center;">
             <h2>Final Report Draft</h2>
@@ -881,20 +885,7 @@ ${dischargeSummary && dischargeSummary.length > 0
         }
       }
     }
-  }, [reportData, initialFindings, interimFindings, finalFindings, dischargeSummary, isEditing, hasUserEdited]);
-
-  // Initial content setup
-  useEffect(() => {
-    if (contentRef.current && !hasUserEdited) {
-      try {
-        const report = generateSimpleReport();
-        setEditableContent(report);
-        contentRef.current.innerHTML = report;
-      } catch (error) {
-        console.error('Error in initial setup:', error);
-      }
-    }
-  }, []);
+  }, [reportData, initialFindings, interimFindings, finalFindings, dischargeSummary, dischargeSummaryData, isEditing, hasUserEdited, generateSimpleReport]);
 
   const handleContentChange = () => {
     if (contentRef.current) {
@@ -934,7 +925,6 @@ ${dischargeSummary && dischargeSummary.length > 0
         // For now, prioritize proper table formatting over user edits
         // This ensures Clinical Information tables copy correctly
         // User can re-edit after copying if needed
-        console.log('Using generated content to preserve table formatting');
       }
       
       const tempDiv = document.createElement('div');
@@ -1027,24 +1017,18 @@ ${dischargeSummary && dischargeSummary.length > 0
 
   const downloadAsWord = async () => {
     try {
-      console.log('Download function called');
       let htmlContent = '';
       
       // Get content from the current DOM element
       if (contentRef.current) {
         htmlContent = contentRef.current.innerHTML;
-        console.log('Got content from DOM element');
       } else {
         htmlContent = editableContent;
-        console.log('Got content from state');
       }
       
       if (!htmlContent.trim()) {
-        console.error('No content available');
         throw new Error('No content to download');
       }
-      
-      console.log('Content length:', htmlContent.length);
       
       // Create a complete HTML document with proper Word formatting
       const wordDocument = `<!DOCTYPE html>
@@ -1115,15 +1099,11 @@ ${htmlContent}
 </body>
 </html>`;
       
-      console.log('Creating Word document...');
-      
       // Generate filename with current date
       const now = new Date();
       const dateStr = now.toISOString().split('T')[0]; // YYYY-MM-DD format
       const patientName = reportData?.patientName?.replace(/[^a-zA-Z0-9]/g, '_') || 'Patient';
       const filename = `Physiotherapy_Report_${patientName}_${dateStr}.doc`;
-      
-      console.log('Filename:', filename);
       
       // Try multiple download methods for better Chrome compatibility
       
@@ -1138,10 +1118,7 @@ ${htmlContent}
       
       for (const mimeType of mimeTypes) {
         try {
-          console.log('Trying MIME type:', mimeType);
-          
           const blob = new Blob([wordDocument], { type: mimeType });
-          console.log('Blob created, size:', blob.size);
           
           // Check if the browser supports the download attribute
           const link = document.createElement('a');
@@ -1151,10 +1128,7 @@ ${htmlContent}
             link.download = filename;
             link.style.display = 'none';
             
-            console.log('Download link created:', url);
-            
             document.body.appendChild(link);
-            console.log('Link added to DOM, triggering click...');
             
             // Force click with user gesture
             link.click();
@@ -1165,26 +1139,21 @@ ${htmlContent}
                 document.body.removeChild(link);
               }
               URL.revokeObjectURL(url);
-              console.log('Cleanup completed for', mimeType);
             }, 1000);
             
             downloadSuccess = true;
             break; // Exit loop if successful
           }
         } catch (err) {
-          console.log('Failed with MIME type', mimeType, ':', err);
           continue;
         }
       }
       
       // Method 2: Fallback - open in new window if download fails
       if (!downloadSuccess) {
-        console.log('Download failed, trying fallback method...');
         const dataUri = 'data:application/msword;charset=utf-8,' + encodeURIComponent(wordDocument);
         const newWindow = window.open(dataUri, '_blank');
-        if (newWindow) {
-          console.log('Opened in new window');
-        } else {
+        if (!newWindow) {
           throw new Error('Unable to download or open file');
         }
       }
