@@ -4,8 +4,13 @@
  * Build script to update version information before building
  */
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// Get __dirname equivalent for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Get current timestamp for build
 const buildTimestamp = Date.now();
@@ -70,10 +75,10 @@ const indexHtmlPath = path.join(__dirname, '../index.html');
 let indexHtml = fs.readFileSync(indexHtmlPath, 'utf8');
 indexHtml = indexHtml.replace(
   /<title>.*?<\/title>/,
-  \`<title>Physiotherapy Medical Report Generator v\${version} - Tuen Mun Hospital</title>\`
+  `<title>Physiotherapy Medical Report Generator v${version} - Tuen Mun Hospital</title>`
 );
 fs.writeFileSync(indexHtmlPath, indexHtml);
 
-console.log(\`✅ Version updated to v\${version} (Build: \${buildTimestamp})\`);
-console.log(\`📅 Build date: \${buildDate}\`);
-console.log(\`📁 Updated files: version.ts, index.html\`);
+console.log(`✅ Version updated to v${version} (Build: ${buildTimestamp})`);
+console.log(`📅 Build date: ${buildDate}`);
+console.log(`📁 Updated files: version.ts, index.html`);
