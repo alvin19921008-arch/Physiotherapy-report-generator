@@ -7,7 +7,6 @@ import { useToast } from '@/hooks/use-toast';
 import DischargeSummaryComponent from '@/components/DischargeSummary';
 import FinalReportDraft from '@/components/FinalReportDraft';
 import ErrorBoundary from '@/components/ErrorBoundary';
-import VersionControl from '@/components/VersionControl';
 
 // Section components
 import ReferenceInformation from '@/components/sections/ReferenceInformation';
@@ -36,10 +35,6 @@ import { measurePerformance } from '@/utils/performance';
 
 // Lite Data Import
 import LiteDataImport from '@/components/LiteDataImport';
-
-// Version Management
-import VersionDisplay from '@/components/VersionDisplay';
-import { APP_VERSION } from '@/config/version';
 
 const Index = () => {
   const { toast } = useToast();
@@ -153,15 +148,13 @@ const Index = () => {
 
   return (
     <ErrorBoundary>
-      <VersionControl>
-        <div className="min-h-screen bg-gray-50 p-4">
-          <div className="max-w-6xl mx-auto">
+      <div className="min-h-screen bg-gray-50 p-4">
+        <div className="max-w-6xl mx-auto">
         <div className="mb-8 text-center">
           <div className="flex items-center justify-center gap-3 mb-2">
             <h1 className="text-3xl font-bold text-gray-900">
               Physiotherapy Medical Report Generator
             </h1>
-            <VersionDisplay />
           </div>
           <p className="text-gray-600">
             Tuen Mun Hospital - Physiotherapy Department
@@ -421,9 +414,8 @@ const Index = () => {
             />
           </DialogContent>
         </Dialog>
-          </div>
         </div>
-      </VersionControl>
+      </div>
     </ErrorBoundary>
   );
 };
