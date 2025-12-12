@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Copy, FileText, Download, ZoomIn, ZoomOut } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
@@ -1182,9 +1183,12 @@ ${htmlContent}
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="flex justify-between items-center">
-          <p className="text-sm text-gray-600">
-            This is what the medical report draft would look like on Microsoft Word.
-          </p>
+          <div className="text-xs text-gray-500">
+            <p>• Click anywhere in the document above to edit the content</p>
+            <p>• Use "Download Word" to save as .doc file with full formatting preserved</p>
+            <p>• Use "Copy Report" to copy with formatting for pasting into Word or other editors</p>
+            <p>• Downloaded file opens directly in Microsoft Word with proper formatting</p>
+          </div>
           <div className="flex gap-2">
             <div className="flex items-center gap-2 mr-4">
               <Button 
@@ -1209,10 +1213,17 @@ ${htmlContent}
               <FileText className="h-4 w-4" />
               Reset to Original
             </Button>
-            <Button onClick={downloadAsWord} variant="outline" className="flex items-center gap-2">
-              <Download className="h-4 w-4" />
-              Download Word
-            </Button>
+            <Tooltip delayDuration={0}>
+              <TooltipTrigger asChild>
+                <Button onClick={downloadAsWord} variant="outline" className="flex items-center gap-2">
+                  <Download className="h-4 w-4" />
+                  Download Word
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent className="max-w-xs">
+                <p>Due to HTML limitation, the downloaded Word file does not have page number. Please add page number at the right footer on Word file.</p>
+              </TooltipContent>
+            </Tooltip>
             <Button onClick={copyToClipboard} className="flex items-center gap-2">
               <Copy className="h-4 w-4" />
               Copy Report
@@ -1251,13 +1262,6 @@ ${htmlContent}
               }}
             />
           </div>
-        </div>
-        
-        <div className="text-xs text-gray-500">
-          <p>• Click anywhere in the document above to edit the content</p>
-          <p>• Use "Download Word" to save as .doc file with full formatting preserved</p>
-          <p>• Use "Copy Report" to copy with formatting for pasting into Word or other editors</p>
-          <p>• Downloaded file opens directly in Microsoft Word with proper formatting</p>
         </div>
       </CardContent>
     </Card>

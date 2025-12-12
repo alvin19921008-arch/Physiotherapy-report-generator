@@ -35,9 +35,23 @@ import { measurePerformance } from '@/utils/performance';
 
 // Lite Data Import
 import LiteDataImport from '@/components/LiteDataImport';
+import { getVersionInfo } from '@/utils/version';
 
 const Index = () => {
   const { toast } = useToast();
+  
+  // Memoize version info to avoid recalculating on every render
+  const versionInfo = useMemo(() => getVersionInfo(), []);
+  const buildTimestamp = useMemo(() => {
+    return new Date(versionInfo.build).toLocaleString('en-US', { 
+      year: 'numeric', 
+      month: '2-digit', 
+      day: '2-digit', 
+      hour: '2-digit', 
+      minute: '2-digit',
+      hour12: false 
+    });
+  }, [versionInfo.build]);
 
   // Initialize custom hooks
   const {
@@ -175,7 +189,14 @@ const Index = () => {
           </div>
         </div>
 
-        {/* Development Tools Section */}
+        {/* Version Timestamp Log */}
+        <div className="mb-2 flex justify-end">
+          <div className="text-xs text-gray-400 font-mono">
+            v{versionInfo.current} | {buildTimestamp}
+          </div>
+        </div>
+
+        {/* Developer Tools Section */}
         <div className="mb-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
           {/* Import Lite Data Button */}
           <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
@@ -200,7 +221,7 @@ const Index = () => {
           <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
             <div className="flex items-center justify-between h-full">
               <div>
-                <h3 className="text-sm font-medium text-yellow-800">Development Tools</h3>
+                <h3 className="text-sm font-medium text-yellow-800">Developer tools</h3>
                 <p className="text-xs text-yellow-600 mt-1">Fill all sections with sample data for testing purposes</p>
               </div>
             {!showMockDataSelector ? (
