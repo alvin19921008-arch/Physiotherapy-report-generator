@@ -570,7 +570,9 @@ const FinalReportDraft: React.FC<FinalReportDraftProps> = ({
           
           content += `<div style="font-family: 'Times New Roman', serif; font-size: 10pt; line-height: 1.0; margin-bottom: 12pt;">${counter++}. ${generateStraightLegRaiseText()}</div>`;
         } else if (test.testType === 'other' && test.testName && test.result) {
-          content += `<div style="font-family: 'Times New Roman', serif; font-size: 10pt; line-height: 1.0; margin-bottom: 12pt;">${counter++}. ${test.testName} was ${test.result}.</div>`;
+          // Capitalize first letter of test name
+          const capitalizedTestName = test.testName.charAt(0).toUpperCase() + test.testName.slice(1);
+          content += `<div style="font-family: 'Times New Roman', serif; font-size: 10pt; line-height: 1.0; margin-bottom: 12pt;">${counter++}. ${capitalizedTestName} was ${test.result}.</div>`;
         }
       });
     }

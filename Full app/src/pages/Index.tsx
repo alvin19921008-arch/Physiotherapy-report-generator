@@ -263,12 +263,16 @@ const Index = () => {
         </div>
 
         <Tabs value={activeTab} onValueChange={navigateToTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 sm:grid-cols-5 lg:grid-cols-10 gap-1 h-auto p-1">
+          <TabsList className="grid w-full grid-cols-3 sm:grid-cols-5 lg:grid-cols-10 gap-1 h-auto p-1 bg-muted rounded-md">
             {tabConfig.map((tab) => (
               <TabsTrigger 
                 key={tab.value}
                 value={tab.value}
-                className={`h-auto min-h-[3rem] p-2 text-xs sm:text-sm lg:text-base whitespace-normal text-center leading-tight flex items-center justify-center relative ${
+                className={`h-auto min-h-[3rem] p-1 text-xs sm:text-sm lg:text-base whitespace-normal text-center leading-tight flex items-center justify-center relative border-0 rounded-sm transition-colors ${
+                  activeTab === tab.value 
+                    ? 'bg-background text-foreground shadow-sm' 
+                    : 'hover:bg-accent hover:text-accent-foreground'
+                } ${
                   tab.completed ? 'bg-green-50 border-green-200 text-green-800' : ''
                 }`}
               >
@@ -399,7 +403,7 @@ const Index = () => {
                 }}
                 variant={activeTab === tab.value ? "default" : "ghost"}
                 size="sm"
-                className={`h-auto min-h-[3rem] p-1 text-xs sm:text-sm lg:text-base whitespace-normal text-center leading-tight flex items-center justify-center relative border-0 rounded-sm ${
+                className={`h-auto min-h-[3rem] p-1 text-xs sm:text-sm lg:text-base whitespace-normal text-center leading-tight flex items-center justify-center relative border-0 rounded-sm transition-colors ${
                   activeTab === tab.value 
                     ? 'bg-background text-foreground shadow-sm' 
                     : 'hover:bg-accent hover:text-accent-foreground'

@@ -2695,7 +2695,9 @@ const ClinicalFindingsComponent: React.FC<ClinicalFindingsProps> = ({
                     
                     elements.push(<p key={`test-${counter}-${index}`}>{counter++}. {generateStraightLegRaiseText()}</p>);
                   } else if (test.testType === 'other' && test.testName && test.result) {
-                    elements.push(<p key={`test-${counter}-${index}`}>{counter++}. {test.testName} was {test.result}.</p>);
+                    // Capitalize first letter of test name
+                    const capitalizedTestName = test.testName.charAt(0).toUpperCase() + test.testName.slice(1);
+                    elements.push(<p key={`test-${counter}-${index}`}>{counter++}. {capitalizedTestName} was {test.result}.</p>);
                   }
                 });
                 
