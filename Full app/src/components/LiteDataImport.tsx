@@ -42,10 +42,13 @@ interface LiteAppData {
   totalSessions: string;
   treatmentDetails: string;
   registrationDate: string;
-  treatmentPeriodStart: string;
-  treatmentPeriodEnd: string;
+  treatmentPeriodStart?: string;
+  treatmentPeriodEnd?: string;
+  startDate?: string; // Lite app field name
+  endDate?: string; // Lite app field name
   caseTherapists: string;
-  reportWriter: string;
+  reportWriter?: string; // Full app field name
+  reportWrittenBy?: string; // Lite app field name
   attendedSessions: string;
   defaultedSessions: string;
   
@@ -184,6 +187,26 @@ const LiteDataImport: React.FC<LiteDataImportProps> = ({ onImportData, currentDa
     return dischargeTypeMap[liteDischargeType] || liteDischargeType.toLowerCase();
   };
 
+  // Helper function to map lite app episode format to full app format
+  // Lite app: 'First', 'Second', 'Third', etc.
+  // Full app: '1st', '2nd', '3rd', etc.
+  const mapEpisodeFormat = (liteEpisode: string): string => {
+    const episodeMap: { [key: string]: string } = {
+      'First': '1st',
+      'Second': '2nd',
+      'Third': '3rd',
+      'Fourth': '4th',
+      'Fifth': '5th',
+      'Sixth': '6th',
+      'Seventh': '7th',
+      'Eighth': '8th',
+      'Ninth': '9th',
+      'Tenth': '10th'
+    };
+    // If already in correct format or not mapped, return as is
+    return episodeMap[liteEpisode] || liteEpisode;
+  };
+
   const convertLiteDataToFullData = useCallback((liteData: LiteAppData): ReportData => {
     // Convert lite app data structure to full app data structure
     const fullData: ReportData = {
@@ -206,16 +229,21 @@ const LiteDataImport: React.FC<LiteDataImportProps> = ({ onImportData, currentDa
       diagnosis: liteData.diagnosis || '',
       
       // Section 4: Source of Referral - from lite app
-      referralSources: liteData.referralSources || [],
+      // Map episode format from Lite app ('First', 'Second', etc.) to Full app ('1st', '2nd', etc.)
+      referralSources: (liteData.referralSources || []).map(source => ({
+        ...source,
+        episode: mapEpisodeFormat(source.episode)
+      })),
       
       // Section 5: Duration of Treatment - from lite app
       totalSessions: liteData.totalSessions || '',
       referralInfo: liteData.treatmentDetails || '',
       registrationDate: liteData.registrationDate || '',
-      treatmentPeriodStart: liteData.treatmentPeriodStart || '',
-      treatmentPeriodEnd: liteData.treatmentPeriodEnd || '',
+      // Map Lite app field names to Full app field names
+      treatmentPeriodStart: liteData.treatmentPeriodStart || liteData.startDate || '',
+      treatmentPeriodEnd: liteData.treatmentPeriodEnd || liteData.endDate || '',
       caseTherapists: liteData.caseTherapists || '',
-      reportWriter: liteData.reportWriter || '',
+      reportWriter: liteData.reportWriter || liteData.reportWrittenBy || '',
       attendedSessions: liteData.attendedSessions || '',
       defaultedSessions: liteData.defaultedSessions || '',
       

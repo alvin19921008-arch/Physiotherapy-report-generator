@@ -48,6 +48,7 @@ const Declaration: React.FC<DeclarationProps> = ({
               onChange={(e) => onUpdateNested('therapistDetails', 'name', e.target.value)}
               placeholder="Full name of the therapist"
             />
+            <p className="text-xs text-gray-500">e.g. Mr. CHAN Tai Man</p>
           </div>
           
           <div className="space-y-2">

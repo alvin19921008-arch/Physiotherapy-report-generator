@@ -1182,15 +1182,36 @@ ${htmlContent}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-start">
           <div className="text-xs text-gray-500">
             <p>• Click anywhere in the document above to edit the content</p>
             <p>• Use "Download Word" to save as .doc file with full formatting preserved</p>
             <p>• Use "Copy Report" to copy with formatting for pasting into Word or other editors</p>
             <p>• Downloaded file opens directly in Microsoft Word with proper formatting</p>
           </div>
-          <div className="flex gap-2">
-            <div className="flex items-center gap-2 mr-4">
+          <div className="flex flex-col items-end gap-3">
+            <div className="flex gap-2">
+              <Button onClick={resetToOriginal} variant="outline" className="flex items-center gap-2">
+                <FileText className="h-4 w-4" />
+                Reset to Original
+              </Button>
+              <Tooltip delayDuration={0}>
+                <TooltipTrigger asChild>
+                  <Button onClick={downloadAsWord} variant="outline" className="flex items-center gap-2">
+                    <Download className="h-4 w-4" />
+                    Download Word
+                  </Button>
+                </TooltipTrigger>
+              <TooltipContent className="max-w-xs bg-amber-50 border-amber-200 text-amber-900">
+                <p>Due to HTML limitation, the downloaded Word file does not have page number. Please add page number at the right footer on Word file.</p>
+              </TooltipContent>
+              </Tooltip>
+              <Button onClick={copyToClipboard} className="flex items-center gap-2">
+                <Copy className="h-4 w-4" />
+                Copy Report
+              </Button>
+            </div>
+            <div className="flex items-center gap-2">
               <Button 
                 onClick={() => setZoomLevel(prev => Math.max(50, prev - 10))} 
                 variant="outline" 
@@ -1209,25 +1230,6 @@ ${htmlContent}
                 <ZoomIn className="h-4 w-4" />
               </Button>
             </div>
-            <Button onClick={resetToOriginal} variant="outline" className="flex items-center gap-2">
-              <FileText className="h-4 w-4" />
-              Reset to Original
-            </Button>
-            <Tooltip delayDuration={0}>
-              <TooltipTrigger asChild>
-                <Button onClick={downloadAsWord} variant="outline" className="flex items-center gap-2">
-                  <Download className="h-4 w-4" />
-                  Download Word
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent className="max-w-xs">
-                <p>Due to HTML limitation, the downloaded Word file does not have page number. Please add page number at the right footer on Word file.</p>
-              </TooltipContent>
-            </Tooltip>
-            <Button onClick={copyToClipboard} className="flex items-center gap-2">
-              <Copy className="h-4 w-4" />
-              Copy Report
-            </Button>
           </div>
         </div>
         

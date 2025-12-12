@@ -81,6 +81,7 @@ const DurationOfTreatment: React.FC<DurationOfTreatmentProps> = ({
               onChange={(e) => onUpdate({ caseTherapists: e.target.value })}
               placeholder="Therapist names"
             />
+            <p className="text-xs text-gray-500">e.g. Mr. CHAN Tai Man</p>
           </div>
         </div>
         <div className="grid grid-cols-3 gap-4">
@@ -92,6 +93,7 @@ const DurationOfTreatment: React.FC<DurationOfTreatmentProps> = ({
               onChange={(e) => onUpdate({ reportWriter: e.target.value })}
               placeholder="Report writer name"
             />
+            <p className="text-xs text-gray-500">e.g. Mr. CHAN Tai Man</p>
           </div>
           <div className="space-y-2">
             <Label htmlFor="attendedSessions">Attended Sessions</Label>

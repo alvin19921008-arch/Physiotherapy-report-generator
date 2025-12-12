@@ -43,14 +43,13 @@ const Index = () => {
   // Memoize version info to avoid recalculating on every render
   const versionInfo = useMemo(() => getVersionInfo(), []);
   const buildTimestamp = useMemo(() => {
-    return new Date(versionInfo.build).toLocaleString('en-US', { 
-      year: 'numeric', 
-      month: '2-digit', 
-      day: '2-digit', 
-      hour: '2-digit', 
-      minute: '2-digit',
-      hour12: false 
-    });
+    const date = new Date(versionInfo.build);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${day}/${month}/${year} ${hours}:${minutes}`;
   }, [versionInfo.build]);
 
   // Initialize custom hooks
@@ -192,7 +191,7 @@ const Index = () => {
         {/* Version Timestamp Log */}
         <div className="mb-2 flex justify-end">
           <div className="text-xs text-gray-400 font-mono">
-            v{versionInfo.current} | {buildTimestamp}
+            {versionInfo.current} | {buildTimestamp}
           </div>
         </div>
 
